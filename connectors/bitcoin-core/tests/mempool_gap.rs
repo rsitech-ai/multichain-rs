@@ -20,6 +20,10 @@ impl BitcoinRpc for SnapshotRpc {
         unreachable!("not used")
     }
 
+    async fn get_block_hash(&self, _height: u32) -> Result<BlockHash, RpcError> {
+        unreachable!("not used")
+    }
+
     async fn get_block(&self, _hash: BlockHash) -> Result<Vec<u8>, RpcError> {
         unreachable!("not used")
     }

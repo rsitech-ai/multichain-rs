@@ -236,11 +236,14 @@ dependencies = [
 name = "bitcoin-canonicality"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "bitcoin",
  "bitcoin-domain",
  "chain-domain",
+ "futures-util",
  "sha2 0.11.0",
  "thiserror 2.0.19",
+ "tokio",
 ]
 
 [[package]]
@@ -1306,10 +1309,14 @@ version = "0.1.0"
 dependencies = [
  "archive-format",
  "archive-writer",
+ "async-trait",
+ "bitcoin-canonicality",
  "bitcoin-core-connector",
+ "bitcoin-domain",
  "observation-envelope",
  "platform-proto",
  "prost",
+ "query-api",
  "rdkafka",
  "storage-adapters",
  "storage-ports",
@@ -1736,7 +1743,11 @@ dependencies = [
 name = "query-api"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "axum",
+ "bitcoin-canonicality",
+ "bitcoin-core-connector",
+ "bitcoin-domain",
  "fact-envelope",
  "native-normalizer",
  "reqwest",

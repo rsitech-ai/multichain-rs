@@ -9,10 +9,14 @@ publish = false
 [dev-dependencies]
 archive-format = { path = "../../crates/archive-format", version = "=0.1.0" }
 archive-writer = { path = "../../services/archive-writer", version = "=0.1.0" }
+async-trait.workspace = true
+bitcoin-canonicality = { path = "../../processors/bitcoin-canonicality", version = "=0.1.0" }
 bitcoin-core-connector = { path = "../../connectors/bitcoin-core", version = "=0.1.0" }
+bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
 observation-envelope = { path = "../../crates/observation-envelope", version = "=0.1.0" }
 platform-proto = { path = "../../crates/platform-proto", version = "=0.1.0" }
 prost.workspace = true
+query-api = { path = "../../services/query-api", version = "=0.1.0" }
 rdkafka.workspace = true
 storage-adapters = { path = "../../crates/storage-adapters", version = "=0.1.0" }
 storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }

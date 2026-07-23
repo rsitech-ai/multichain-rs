@@ -6,11 +6,16 @@ rust-version.workspace = true
 license.workspace = true
 
 [dependencies]
+async-trait.workspace = true
 bitcoin = { workspace = true, features = ["std"] }
 bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
 chain-domain = { path = "../../crates/chain-domain", version = "=0.1.0" }
+futures-util = { workspace = true, features = ["async-await"] }
 sha2.workspace = true
 thiserror.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "sync", "time"] }
 
 [lints]
 workspace = true

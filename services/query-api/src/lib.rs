@@ -4,7 +4,10 @@ mod routes;
 
 use std::{sync::Arc, time::Duration};
 
-use axum::{Router, routing::get};
+use axum::{
+    Router,
+    routing::{get, post},
+};
 use native_normalizer::ClickHouseFactStore;
 use serde::Serialize;
 use sqlx::Row as _;
@@ -13,6 +16,7 @@ use storage_ports::CheckpointKind;
 use tokio::{net::TcpStream, time::timeout};
 
 pub use routes::health::{HealthResponse, ProbeStatus, ReadinessResponse};
+pub use routes::replay::BitcoinRpcBackfillSource;
 
 /// Shared REST application state.
 #[derive(Clone)]
@@ -134,6 +138,10 @@ pub fn router(state: AppState) -> Router {
         .route(
             "/v1/lineage/facts/{fact_id}",
             get(routes::fixtures::lineage),
+        )
+        .route(
+            "/v1/replay/bitcoin/validate",
+            post(routes::replay::validate),
         )
         .with_state(state)
 }

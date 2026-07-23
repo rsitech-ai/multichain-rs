@@ -1,5 +1,6 @@
 #![doc = "Bitcoin candidate-chain tracking and reversible canonical state."]
 
+mod backfill;
 mod checkpoint;
 mod dag;
 mod error;
@@ -16,3 +17,7 @@ pub use utxo::{UtxoEvent, UtxoState};
 
 /// Stable component identifier used by health and build metadata.
 pub const COMPONENT_NAME: &str = "bitcoin-canonicality";
+pub use backfill::{
+    BackfillBlock, BackfillCheckpoint, BackfillCoordinator, BackfillError, BackfillReport,
+    BackfillRequest, BackfillSink, BackfillSource,
+};

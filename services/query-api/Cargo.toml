@@ -6,7 +6,11 @@ rust-version.workspace = true
 license.workspace = true
 
 [dependencies]
+async-trait.workspace = true
 axum = { workspace = true, features = ["http1", "json", "tokio"] }
+bitcoin-canonicality = { path = "../../processors/bitcoin-canonicality", version = "=0.1.0" }
+bitcoin-core-connector = { path = "../../connectors/bitcoin-core", version = "=0.1.0" }
+bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
 fact-envelope = { path = "../../crates/fact-envelope", version = "=0.1.0" }
 native-normalizer = { path = "../../processors/native-normalizer", version = "=0.1.0" }
 reqwest.workspace = true

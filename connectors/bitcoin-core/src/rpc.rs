@@ -30,6 +30,7 @@ pub struct ChainTip {
 pub trait BitcoinRpc: Send + Sync {
     async fn get_raw_mempool_with_sequence(&self) -> Result<MempoolSnapshot, RpcError>;
     async fn get_raw_transaction(&self, txid: Txid) -> Result<Option<Vec<u8>>, RpcError>;
+    async fn get_block_hash(&self, height: u32) -> Result<BlockHash, RpcError>;
     async fn get_block(&self, hash: BlockHash) -> Result<Vec<u8>, RpcError>;
     async fn get_best_block_hash(&self) -> Result<BlockHash, RpcError>;
     async fn get_chain_tips(&self) -> Result<Vec<ChainTip>, RpcError>;
@@ -160,6 +161,18 @@ impl BitcoinRpc for CoreRpcClient {
             Err(RpcError::Remote { code: -5, .. }) => Ok(None),
             Err(error) => Err(error),
         }
+    }
+
+    async fn get_block_hash(&self, height: u32) -> Result<BlockHash, RpcError> {
+        const METHOD: &str = "getblockhash";
+        let value = self.call(METHOD, json!([height])).await?;
+        parse_block_hash(
+            METHOD,
+            value.as_str().ok_or_else(|| RpcError::InvalidResult {
+                method: METHOD,
+                message: "block hash is not a string".to_owned(),
+            })?,
+        )
     }
 
     async fn get_block(&self, hash: BlockHash) -> Result<Vec<u8>, RpcError> {
