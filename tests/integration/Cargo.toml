@@ -14,6 +14,10 @@ bitcoin-canonicality = { path = "../../processors/bitcoin-canonicality", version
 bitcoin-core-connector = { path = "../../connectors/bitcoin-core", version = "=0.1.0" }
 bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
 bitcoin-mempool = { path = "../../processors/bitcoin-mempool", version = "=0.1.0" }
+ethereum-consensus-connector = { path = "../../connectors/ethereum-consensus", version = "=0.1.0" }
+ethereum-reth-connector = { path = "../../connectors/ethereum-reth", version = "=0.1.0" }
+evm-canonicality = { path = "../../processors/evm-canonicality", version = "=0.1.0" }
+evm-domain = { path = "../../crates/evm-domain", version = "=0.1.0" }
 observation-envelope = { path = "../../crates/observation-envelope", version = "=0.1.0" }
 platform-proto = { path = "../../crates/platform-proto", version = "=0.1.0" }
 prost.workspace = true

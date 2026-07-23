@@ -811,6 +811,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "ethereum-consensus-connector"
+version = "0.1.0"
+dependencies = [
+ "evm-canonicality",
+ "evm-domain",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "thiserror 2.0.19",
+]
+
+[[package]]
+name = "ethereum-reth-connector"
+version = "0.1.0"
+dependencies = [
+ "evm-canonicality",
+ "evm-domain",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "thiserror 2.0.19",
+]
+
+[[package]]
 name = "event-listener"
 version = "5.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -819,6 +843,14 @@ dependencies = [
  "concurrent-queue",
  "parking",
  "pin-project-lite",
+]
+
+[[package]]
+name = "evm-canonicality"
+version = "0.1.0"
+dependencies = [
+ "evm-domain",
+ "thiserror 2.0.19",
 ]
 
 [[package]]
@@ -1427,6 +1459,10 @@ dependencies = [
  "bitcoin-core-connector",
  "bitcoin-domain",
  "bitcoin-mempool",
+ "ethereum-consensus-connector",
+ "ethereum-reth-connector",
+ "evm-canonicality",
+ "evm-domain",
  "observation-envelope",
  "platform-proto",
  "prost",

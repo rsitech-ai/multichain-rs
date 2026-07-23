@@ -1,0 +1,17 @@
+[package]
+name = "ethereum-reth-connector"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+evm-canonicality = { path = "../../processors/evm-canonicality", version = "=0.1.0" }
+evm-domain = { path = "../../crates/evm-domain", version = "=0.1.0" }
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true
