@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package platform.bitcoin.v1;
+
+// MempoolMembership is an observer-local membership transition. The epoch
+// identity is stable across later fact revisions.
+message MempoolMembership {
+  string network = 1;
+  string source_id = 2;
+  bytes txid = 3;
+  bytes membership_epoch_id = 4;
+  string state = 5;
+  string reason = 6;
+  string reason_confidence = 7;
+  optional uint64 node_mempool_sequence = 8;
+}

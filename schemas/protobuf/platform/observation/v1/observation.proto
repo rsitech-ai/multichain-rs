@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package platform.observation.v1;
+
+// Observation preserves one exact source payload and the context in which it
+// was observed. It is immutable once appended to the local WAL.
+message Observation {
+  uint32 schema_version = 1;
+  bytes observation_id = 2;
+  string source_id = 3;
+  bytes source_session_id = 4;
+  uint64 collector_sequence = 5;
+  string chain = 6;
+  string network = 7;
+  string channel = 8;
+  string source_message_type = 9;
+  optional uint64 source_sequence = 10;
+  optional bytes source_cursor = 11;
+  int64 observed_at_unix_ns = 12;
+  uint64 observed_at_monotonic_ns = 13;
+  optional int64 source_time_unix_ns = 14;
+  bytes payload_hash = 15;
+  bytes payload = 16;
+  map<string, string> attributes = 17;
+  repeated string quality_flags = 18;
+}
+
+// WalCommit records the immutable byte and collector-sequence range made
+// durable by one group commit.
+message WalCommit {
+  bytes source_session_id = 1;
+  uint64 first_collector_sequence = 2;
+  uint64 last_collector_sequence = 3;
+  uint64 first_wal_offset = 4;
+  uint64 last_wal_offset = 5;
+  int64 durable_at_unix_ns = 6;
+  bytes commit_hash = 7;
+}
+
+// CommittedObservation is a read model derived by joining an immutable
+// Observation to its immutable WalCommit. It is never written back into the
+// observation frame.
+message CommittedObservation {
+  Observation observation = 1;
+  int64 durable_at_unix_ns = 2;
+  bytes wal_commit_hash = 3;
+}

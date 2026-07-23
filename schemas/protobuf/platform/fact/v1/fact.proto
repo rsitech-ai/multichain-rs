@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package platform.fact.v1;
+
+// Fact is one append-only revision of a stable logical fact.
+message Fact {
+  uint32 schema_version = 1;
+  bytes fact_id = 2;
+  bytes fact_key = 3;
+  uint64 revision = 4;
+  string chain = 5;
+  string network = 6;
+  string fact_type = 7;
+  int64 valid_from_unix_ns = 8;
+  int64 recorded_at_unix_ns = 9;
+  string canonicality = 10;
+  string finality = 11;
+  repeated bytes source_observation_ids = 12;
+  string parser_version = 13;
+  repeated string quality_flags = 14;
+  bytes payload = 15;
+  optional bytes supersedes_fact_id = 16;
+}

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package platform.control.v1;
+
+// CoverageInterval states what is known about source coverage over an
+// interval. State convergence does not imply transition-history recovery.
+message CoverageInterval {
+  string source_id = 1;
+  bytes source_session_id = 2;
+  int64 start_unix_ns = 3;
+  optional int64 end_unix_ns = 4;
+  string state = 5;
+  string cause = 6;
+  repeated bytes repair_evidence_observation_ids = 7;
+}
+
+// SourceHealth is a point-in-time operational projection. CoverageInterval is
+// the durable record for known gaps.
+message SourceHealth {
+  string source_id = 1;
+  bytes source_session_id = 2;
+  string connection_state = 3;
+  string sync_state = 4;
+  optional uint64 source_head = 5;
+  optional uint64 source_sequence = 6;
+  uint64 collector_sequence = 7;
+  int64 observed_at_unix_ns = 8;
+  int64 clock_offset_ns = 9;
+  uint64 wal_backlog_bytes = 10;
+  uint64 broker_publication_lag = 11;
+  uint64 open_incomplete_intervals = 12;
+  repeated string quality_flags = 13;
+}
+
+// RevisionEvent announces that a logical fact has a new append-only revision.
+message RevisionEvent {
+  bytes fact_key = 1;
+  bytes fact_id = 2;
+  uint64 revision = 3;
+  optional bytes supersedes_fact_id = 4;
+  string reason = 5;
+  int64 recorded_at_unix_ns = 6;
+}
