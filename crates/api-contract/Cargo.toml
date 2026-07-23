@@ -1,12 +1,12 @@
 [package]
-name = "alert-engine"
+name = "api-contract"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
 [dependencies]
-api-contract = { path = "../../crates/api-contract", version = "=0.1.0" }
+bitcoin-domain = { path = "../bitcoin-domain", version = "=0.1.0" }
 blake3.workspace = true
 serde.workspace = true
 thiserror.workspace = true

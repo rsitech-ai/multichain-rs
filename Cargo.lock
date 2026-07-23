@@ -14,6 +14,13 @@ dependencies = [
 [[package]]
 name = "alert-engine"
 version = "0.1.0"
+dependencies = [
+ "api-contract",
+ "blake3",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.19",
+]
 
 [[package]]
 name = "allocator-api2"
@@ -35,6 +42,17 @@ name = "anyhow"
 version = "1.0.104"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+
+[[package]]
+name = "api-contract"
+version = "0.1.0"
+dependencies = [
+ "bitcoin-domain",
+ "blake3",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.19",
+]
 
 [[package]]
 name = "archive-format"
@@ -1943,6 +1961,9 @@ dependencies = [
 [[package]]
 name = "reconciler"
 version = "0.1.0"
+dependencies = [
+ "thiserror 2.0.19",
+]
 
 [[package]]
 name = "redox_syscall"
