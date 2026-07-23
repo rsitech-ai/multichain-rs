@@ -5,6 +5,7 @@ use std::fmt::Write as _;
 use bitcoin_domain::Sats;
 use evm_domain::EvmNetwork;
 use serde::Serialize;
+use solana_domain::ForkId;
 use thiserror::Error;
 
 const MAX_SOURCE_COUNT: usize = 32;
@@ -217,6 +218,151 @@ impl EvmTruth {
             finality,
             completeness,
             coverage,
+            as_of_unix_ns,
+        })
+    }
+}
+
+/// Solana ingestion coverage for the initial bounded product tier.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+pub struct SolanaCoverage {
+    /// Independently identified Yellowstone providers contributing truth.
+    pub provider_count: u8,
+    /// Every executed transaction is in scope.
+    pub all_transactions: bool,
+    /// Number of explicit account identities in the selected S2 tier.
+    pub selected_account_filter_count: u32,
+    /// A full account firehose is deliberately not claimed by v1.
+    pub full_account_firehose: bool,
+    /// At least one range used explicit reconstruction evidence.
+    pub reconstruction: bool,
+}
+
+impl SolanaCoverage {
+    /// Creates explicit Solana coverage flags.
+    #[must_use]
+    pub const fn new(
+        provider_count: u8,
+        selected_account_filter_count: u32,
+        full_account_firehose: bool,
+        reconstruction: bool,
+    ) -> Self {
+        Self {
+            provider_count,
+            all_transactions: true,
+            selected_account_filter_count,
+            full_account_firehose,
+            reconstruction,
+        }
+    }
+}
+
+/// Source- and fork-qualified Solana response truth.
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+pub struct SolanaTruth {
+    network: &'static str,
+    source_ids: Vec<String>,
+    revision: u64,
+    slot: u64,
+    blockhash: String,
+    canonicality: String,
+    commitment: String,
+    completeness: Completeness,
+    coverage: SolanaCoverage,
+    provider_divergent: bool,
+    recovery_observation_ids: Vec<String>,
+    as_of_unix_ns: i64,
+}
+
+impl SolanaTruth {
+    /// Constructs bounded Solana mainnet-beta truth.
+    ///
+    /// # Errors
+    ///
+    /// Rejects missing provider independence, revision zero, contradictory
+    /// fork/commitment states, unsupported full-firehose claims, unqualified
+    /// divergence, and recovery without observation evidence.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new<I, S, R>(
+        source_ids: I,
+        revision: u64,
+        fork_id: &ForkId,
+        canonicality: impl Into<String>,
+        commitment: impl Into<String>,
+        completeness: Completeness,
+        coverage: SolanaCoverage,
+        provider_divergent: bool,
+        recovery_observation_ids: R,
+        as_of_unix_ns: i64,
+    ) -> Result<Self, TruthError>
+    where
+        I: IntoIterator<Item = S>,
+        S: Into<String>,
+        R: IntoIterator<Item = [u8; 32]>,
+    {
+        let source_ids = validated_sources(source_ids)?;
+        if revision == 0 {
+            return Err(TruthError::ZeroRevision);
+        }
+        if coverage.provider_count != 2 || usize::from(coverage.provider_count) != source_ids.len()
+        {
+            return Err(TruthError::InvalidSolanaProviderCount);
+        }
+        if coverage.selected_account_filter_count > 1_024 || coverage.full_account_firehose {
+            return Err(TruthError::UnsupportedSolanaCoverage);
+        }
+        let canonicality = canonicality.into();
+        let commitment = commitment.into();
+        if !matches!(
+            canonicality.as_str(),
+            "candidate" | "canonical" | "non_canonical"
+        ) || !matches!(
+            commitment.as_str(),
+            "received" | "processed" | "confirmed" | "finalized" | "dead"
+        ) {
+            return Err(TruthError::InvalidSolanaStatus {
+                canonicality,
+                commitment,
+            });
+        }
+        let consistent = match commitment.as_str() {
+            "dead" => canonicality == "non_canonical",
+            "received" => canonicality == "candidate",
+            "processed" => matches!(canonicality.as_str(), "candidate" | "canonical"),
+            "confirmed" | "finalized" => canonicality == "canonical",
+            _ => false,
+        };
+        if !consistent {
+            return Err(TruthError::InconsistentSolanaStatus {
+                canonicality,
+                commitment,
+            });
+        }
+        if provider_divergent && completeness == Completeness::Complete {
+            return Err(TruthError::UnqualifiedSolanaDivergence);
+        }
+        let recovery_observation_ids = recovery_observation_ids
+            .into_iter()
+            .map(|identity| encode_hex(&identity))
+            .collect::<Vec<_>>();
+        let has_recovery = !recovery_observation_ids.is_empty();
+        if coverage.reconstruction != has_recovery
+            || (completeness == Completeness::Recovered) != has_recovery
+        {
+            return Err(TruthError::InvalidSolanaRecoveryEvidence);
+        }
+        Ok(Self {
+            network: "solana-mainnet-beta",
+            source_ids,
+            revision,
+            slot: fork_id.slot().value(),
+            blockhash: fork_id.blockhash().to_string(),
+            canonicality,
+            commitment,
+            completeness,
+            coverage,
+            provider_divergent,
+            recovery_observation_ids,
             as_of_unix_ns,
         })
     }
@@ -527,6 +673,34 @@ pub enum TruthError {
         /// Supplied finality.
         finality: String,
     },
+    /// Solana truth requires exactly two independent configured providers.
+    #[error("Solana truth requires exactly two source identities")]
+    InvalidSolanaProviderCount,
+    /// Solana v1 cannot claim unbounded/full account coverage.
+    #[error("unsupported Solana coverage claim")]
+    UnsupportedSolanaCoverage,
+    /// Solana canonicality or commitment text was unknown.
+    #[error("invalid Solana status pair {canonicality}/{commitment}")]
+    InvalidSolanaStatus {
+        /// Supplied canonicality.
+        canonicality: String,
+        /// Supplied commitment.
+        commitment: String,
+    },
+    /// Solana canonicality and commitment contradicted each other.
+    #[error("inconsistent Solana status pair {canonicality}/{commitment}")]
+    InconsistentSolanaStatus {
+        /// Supplied canonicality.
+        canonicality: String,
+        /// Supplied commitment.
+        commitment: String,
+    },
+    /// A divergent provider view cannot be called complete.
+    #[error("provider divergence requires incomplete truth")]
+    UnqualifiedSolanaDivergence,
+    /// Recovery status must cite exact observation identities.
+    #[error("invalid Solana recovery evidence")]
+    InvalidSolanaRecoveryEvidence,
     /// Bitcoin canonicality and finality contradicted each other.
     #[error("inconsistent bitcoin status pair {canonicality}/{finality}")]
     InconsistentBitcoinStatus {

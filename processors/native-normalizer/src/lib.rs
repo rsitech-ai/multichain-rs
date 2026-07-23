@@ -2,6 +2,7 @@
 
 mod bitcoin;
 mod evm;
+mod solana;
 
 pub use bitcoin::{
     BITCOIN_PARSER_VERSION, BitcoinBlockFactRow, BitcoinFactBatch, BitcoinFactContext,
@@ -10,6 +11,12 @@ pub use bitcoin::{
 pub use evm::{
     EVM_PARSER_VERSION, EvmBlockFactRow, EvmFactBatch, EvmFactContext, EvmFactError, EvmLogFactRow,
     EvmReceiptFactRow, EvmTransactionFactRow,
+};
+pub use solana::{
+    SOLANA_PARSER_VERSION, SolanaAccountWriteFactRow, SolanaBalanceChangeFactRow,
+    SolanaCoverageTier, SolanaFactBatch, SolanaFactContext, SolanaFactError,
+    SolanaInstructionFactRow, SolanaLogFactRow, SolanaTokenBalanceChangeFactRow,
+    SolanaTransactionFactRow,
 };
 
 use fact_envelope::{
@@ -22,6 +29,7 @@ use platform_proto::{
 };
 use reqwest::{Client, StatusCode, header::CONTENT_LENGTH};
 use serde::{Deserialize, Serialize};
+use solana_decoder::DecodeRevisionFactRow;
 use thiserror::Error;
 
 const FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/001_core.sql");
@@ -29,6 +37,8 @@ const FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/001_core.sql
 pub const BITCOIN_FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/002_bitcoin.sql");
 /// Append-only EVM fact tables keyed by EIP-155 chain ID.
 pub const EVM_FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/003_evm.sql");
+/// Append-only fork-qualified Solana facts and explicit current projections.
+pub const SOLANA_FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/004_solana.sql");
 
 /// Explicit state for a source range that cannot yet be proven complete.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -141,11 +151,16 @@ impl ClickHouseFactStore {
     ///
     /// Returns [`NormalizerError`] on the first rejected statement.
     pub async fn install_schema(&self) -> Result<(), NormalizerError> {
-        for statement in [FACT_SCHEMA, BITCOIN_FACT_SCHEMA, EVM_FACT_SCHEMA]
-            .join("\n")
-            .split(';')
-            .map(str::trim)
-            .filter(|statement| !statement.is_empty())
+        for statement in [
+            FACT_SCHEMA,
+            BITCOIN_FACT_SCHEMA,
+            EVM_FACT_SCHEMA,
+            SOLANA_FACT_SCHEMA,
+        ]
+        .join("\n")
+        .split(';')
+        .map(str::trim)
+        .filter(|statement| !statement.is_empty())
         {
             self.execute(statement).await?;
         }
@@ -211,6 +226,48 @@ impl ClickHouseFactStore {
             .await?;
         self.insert_json_rows("multichain.evm_logs", &batch.logs)
             .await
+    }
+
+    /// Inserts one fork-qualified Solana native fact batch.
+    ///
+    /// # Errors
+    ///
+    /// Returns the first serialization, transport, or `ClickHouse` failure.
+    pub async fn insert_solana_batch(
+        &self,
+        batch: &SolanaFactBatch,
+    ) -> Result<(), NormalizerError> {
+        self.insert_json_rows("multichain.solana_transactions", &batch.transactions)
+            .await?;
+        self.insert_json_rows("multichain.solana_instructions", &batch.instructions)
+            .await?;
+        self.insert_json_rows("multichain.solana_logs", &batch.logs)
+            .await?;
+        self.insert_json_rows("multichain.solana_balance_changes", &batch.balance_changes)
+            .await?;
+        self.insert_json_rows(
+            "multichain.solana_token_balance_changes",
+            &batch.token_balance_changes,
+        )
+        .await?;
+        self.insert_json_rows("multichain.solana_account_writes", &batch.account_writes)
+            .await
+    }
+
+    /// Inserts one append-only Solana decoder attempt.
+    ///
+    /// # Errors
+    ///
+    /// Returns serialization, transport, or `ClickHouse` failure.
+    pub async fn insert_solana_decoder_revision(
+        &self,
+        row: &DecodeRevisionFactRow,
+    ) -> Result<(), NormalizerError> {
+        self.insert_json_rows(
+            "multichain.solana_decoder_revisions",
+            std::slice::from_ref(row),
+        )
+        .await
     }
 
     /// Removes a named fixture synchronously for isolated acceptance tests.

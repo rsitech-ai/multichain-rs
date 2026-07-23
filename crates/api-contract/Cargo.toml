@@ -9,6 +9,7 @@ license.workspace = true
 bitcoin-domain = { path = "../bitcoin-domain", version = "=0.1.0" }
 blake3.workspace = true
 evm-domain = { path = "../evm-domain", version = "=0.1.0" }
+solana-domain = { path = "../solana-domain", version = "=0.1.0" }
 serde.workspace = true
 thiserror.workspace = true
 

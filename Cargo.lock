@@ -92,6 +92,7 @@ dependencies = [
  "evm-domain",
  "serde",
  "serde_json",
+ "solana-domain",
  "thiserror 2.0.19",
 ]
 
@@ -1892,6 +1893,8 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "solana-decoder",
+ "solana-domain",
  "storage-ports",
  "thiserror 2.0.19",
  "tokio",
@@ -3067,6 +3070,16 @@ name = "solana-canonicality"
 version = "0.1.0"
 dependencies = [
  "blake3",
+ "solana-domain",
+ "thiserror 2.0.19",
+]
+
+[[package]]
+name = "solana-decoder"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
  "solana-domain",
  "thiserror 2.0.19",
 ]

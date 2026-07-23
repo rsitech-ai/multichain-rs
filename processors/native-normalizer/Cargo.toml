@@ -16,6 +16,8 @@ rdkafka.workspace = true
 reqwest.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+solana-domain = { path = "../../crates/solana-domain", version = "=0.1.0" }
+solana-decoder = { path = "../solana-decoder", version = "=0.1.0" }
 storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }
 thiserror.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal"] }
