@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
+publish.workspace = true
 
 [dependencies]
 evm-canonicality = { path = "../../processors/evm-canonicality", version = "=0.1.0" }
