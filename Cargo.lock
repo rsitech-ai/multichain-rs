@@ -312,6 +312,11 @@ dependencies = [
 [[package]]
 name = "bitcoin-mempool"
 version = "0.1.0"
+dependencies = [
+ "bitcoin-domain",
+ "sha2 0.11.0",
+ "thiserror 2.0.19",
+]
 
 [[package]]
 name = "bitcoin-units"
@@ -1313,11 +1318,13 @@ dependencies = [
  "bitcoin-canonicality",
  "bitcoin-core-connector",
  "bitcoin-domain",
+ "bitcoin-mempool",
  "observation-envelope",
  "platform-proto",
  "prost",
  "query-api",
  "rdkafka",
+ "serde_json",
  "storage-adapters",
  "storage-ports",
  "tempfile",

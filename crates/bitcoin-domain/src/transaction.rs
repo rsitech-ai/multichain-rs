@@ -5,7 +5,7 @@ use bitcoin::{Transaction, hashes::Hash as _};
 use crate::{OutPoint, ParseError, Sats, ScriptPubkey};
 
 /// Transaction ID, excluding witness serialization.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Txid([u8; 32]);
 
 /// Witness transaction ID.
@@ -88,6 +88,12 @@ impl BitcoinTransaction {
     #[must_use]
     pub fn is_coinbase(&self) -> bool {
         self.inner.is_coinbase()
+    }
+
+    /// Returns virtual transaction size in vbytes.
+    #[must_use]
+    pub fn virtual_size(&self) -> usize {
+        self.inner.vsize()
     }
 
     /// Returns all owned inputs.

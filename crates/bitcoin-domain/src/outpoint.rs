@@ -1,7 +1,7 @@
 use crate::{ParseError, Txid};
 
 /// Canonical Bitcoin spend reference.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct OutPoint {
     /// Referenced transaction.
     pub txid: Txid,

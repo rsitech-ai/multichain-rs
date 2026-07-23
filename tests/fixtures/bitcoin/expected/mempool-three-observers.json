@@ -1,0 +1,13 @@
+{
+  "healthy_source_count": 2,
+  "platform_first_seen_at_unix_ns": 100,
+  "policy": "intersection_healthy",
+  "policy_satisfied": true,
+  "present_source_count": 2,
+  "present_sources": [
+    "observer-a",
+    "observer-b"
+  ],
+  "quality": "degraded",
+  "txid": "4242424242424242424242424242424242424242424242424242424242424242"
+}
