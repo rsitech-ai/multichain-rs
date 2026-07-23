@@ -1,0 +1,28 @@
+[package]
+name = "fault-tests"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[[test]]
+name = "phase0_restart_replay"
+path = "phase0_restart_replay.rs"
+
+[dev-dependencies]
+fact-envelope = { path = "../../crates/fact-envelope", version = "=0.1.0" }
+fixture-source = { path = "../../services/fixture-source", version = "=0.1.0" }
+native-normalizer = { path = "../../processors/native-normalizer", version = "=0.1.0" }
+platform-proto = { path = "../../crates/platform-proto", version = "=0.1.0" }
+prost.workspace = true
+query-api = { path = "../../services/query-api", version = "=0.1.0" }
+rdkafka.workspace = true
+storage-adapters = { path = "../../crates/storage-adapters", version = "=0.1.0" }
+storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }
+tempfile.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"] }
+wal = { path = "../../crates/wal", version = "=0.1.0" }
+
+[lints]
+workspace = true

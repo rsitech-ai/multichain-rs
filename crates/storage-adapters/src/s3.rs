@@ -185,6 +185,32 @@ impl MemoryRawArchive {
 }
 
 impl RawArchive for MemoryRawArchive {
+    fn committed_range(
+        &self,
+        source_session_id: [u8; 16],
+        first_collector_sequence: u64,
+        last_collector_sequence: u64,
+        object_sha256: [u8; 32],
+    ) -> impl Future<Output = Result<Option<ManifestAck>, ArchiveError>> + Send {
+        let state = Arc::clone(&self.state);
+        async move {
+            let guard = state.lock().await;
+            guard
+                .manifests
+                .iter()
+                .find(|(_, manifest)| {
+                    manifest.source_session_id == source_session_id
+                        && manifest.first_collector_sequence == first_collector_sequence
+                        && manifest.last_collector_sequence == last_collector_sequence
+                        && manifest.object_sha256 == object_sha256
+                })
+                .map(|(manifest_hash, manifest)| {
+                    ManifestAck::new(*manifest_hash, manifest.last_collector_sequence)
+                })
+                .map_or(Ok(None), |ack| Ok(Some(ack)))
+        }
+    }
+
     fn stage(
         &self,
         object: EncodedArchive,
@@ -314,6 +340,46 @@ impl RawArchive for MemoryRawArchive {
 }
 
 impl RawArchive for S3RawArchive {
+    fn committed_range(
+        &self,
+        source_session_id: [u8; 16],
+        first_collector_sequence: u64,
+        last_collector_sequence: u64,
+        object_sha256: [u8; 32],
+    ) -> impl Future<Output = Result<Option<ManifestAck>, ArchiveError>> + Send {
+        let pool = self.pool.clone();
+        async move {
+            let row = sqlx::query(
+                "SELECT manifest_hash, last_collector_sequence \
+                 FROM archive_manifests \
+                 WHERE source_session_id = $1 \
+                   AND first_collector_sequence = $2 \
+                   AND last_collector_sequence = $3 \
+                   AND object_sha256 = $4",
+            )
+            .bind(source_session_id.to_vec())
+            .bind(first_collector_sequence.to_be_bytes().to_vec())
+            .bind(last_collector_sequence.to_be_bytes().to_vec())
+            .bind(object_sha256.to_vec())
+            .fetch_optional(&pool)
+            .await
+            .map_err(database_error)?;
+            row.map(|row| {
+                let manifest_hash = fixed_database_bytes::<32>(
+                    row.try_get("manifest_hash").map_err(database_error)?,
+                    "manifest_hash",
+                )?;
+                let last = u64::from_be_bytes(fixed_database_bytes::<8>(
+                    row.try_get("last_collector_sequence")
+                        .map_err(database_error)?,
+                    "last_collector_sequence",
+                )?);
+                Ok(ManifestAck::new(manifest_hash, last))
+            })
+            .transpose()
+        }
+    }
+
     fn stage(
         &self,
         object: EncodedArchive,

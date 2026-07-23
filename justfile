@@ -25,3 +25,9 @@ infra-down:
 
 verify-task4:
     MULTICHAIN_REQUIRE_INFRA=1 cargo test -p integration-tests --test wal_broker_archive -- --nocapture
+
+verify-phase0:
+    MULTICHAIN_REQUIRE_INFRA=1 cargo test -p e2e-tests --test phase0_synthetic -- --nocapture
+    MULTICHAIN_REQUIRE_INFRA=1 cargo test -p fault-tests --test phase0_restart_replay -- --nocapture
+    # The e2e test creates the durable rows needed by the standalone readiness route.
+    log_file="$(mktemp)"; QUERY_API_BIND=127.0.0.1:18080 cargo run -p query-api >"$log_file" 2>&1 & api_pid=$!; trap 'kill "$api_pid" 2>/dev/null || true; rm -f "$log_file"' EXIT; ready=0; for _ in $(seq 1 30); do response="$(curl --fail --silent --show-error http://127.0.0.1:18080/health/ready 2>/dev/null || true)"; if [[ "$response" == *'"component":"query-api"'* && "$response" == *'"ready":true'* ]]; then ready=1; break; fi; sleep 1; done; test "$ready" -eq 1 || { cat "$log_file"; exit 1; }; echo "$response"; kill "$api_pid"; wait "$api_pid" 2>/dev/null || true; trap - EXIT; rm -f "$log_file"

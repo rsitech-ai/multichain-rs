@@ -112,6 +112,33 @@ async fn manifest_commit_is_idempotent_and_overlap_safe() {
 }
 
 #[tokio::test]
+async fn coordinator_full_replay_reuses_committed_manifest() {
+    let archive = MemoryRawArchive::default();
+    let checkpoints = MemoryCheckpointStore::default();
+    let coordinator =
+        ArchiveCoordinator::new(MemoryBroker::default(), archive, checkpoints.clone());
+    let records = vec![committed(7), committed(8)];
+
+    let first = coordinator
+        .publish_and_archive(records.clone())
+        .await
+        .expect("first publish");
+    let replay = coordinator
+        .publish_and_archive(records)
+        .await
+        .expect("full replay is idempotent");
+
+    assert_eq!(first.manifest, replay.manifest);
+    assert_eq!(
+        checkpoints
+            .load(CheckpointKind::Archive, "btc-observer-test-1", [0x42; 16])
+            .await
+            .expect("checkpoint"),
+        Some(DurableCheckpoint::new([0x42; 16], 8))
+    );
+}
+
+#[tokio::test]
 async fn broker_ack_without_archive_coverage_does_not_permit_reclaim() {
     let broker = MemoryBroker::default();
     let archive = MemoryRawArchive::withhold_manifest_commits();

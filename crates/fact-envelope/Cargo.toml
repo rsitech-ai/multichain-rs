@@ -5,5 +5,12 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
+[dependencies]
+blake3.workspace = true
+platform-proto = { path = "../platform-proto", version = "=0.1.0" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
 [lints]
 workspace = true

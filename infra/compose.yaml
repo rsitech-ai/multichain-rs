@@ -40,6 +40,11 @@ services:
 
   clickhouse:
     image: clickhouse/clickhouse-server:26.3-alpine
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-multichain}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-multichain}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-local-development-only}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
     ports:
       - "127.0.0.1:18123:8123"
     volumes:

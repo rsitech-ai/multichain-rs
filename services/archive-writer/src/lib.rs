@@ -74,6 +74,32 @@ where
             )
             .await?;
 
+        if let Some(manifest_ack) = self
+            .archive
+            .committed_range(
+                source_session_id,
+                encoded.first_collector_sequence(),
+                encoded.last_collector_sequence(),
+                encoded.object_sha256(),
+            )
+            .await?
+        {
+            self.checkpoints
+                .advance(
+                    CheckpointKind::Archive,
+                    &source_id,
+                    DurableCheckpoint::new(
+                        source_session_id,
+                        manifest_ack.last_collector_sequence(),
+                    ),
+                )
+                .await?;
+            return Ok(ArchiveOutcome {
+                manifest: manifest_ack,
+                last_collector_sequence: broker_ack.last_collector_sequence(),
+            });
+        }
+
         let previous_manifest_hash = self.archive.latest_manifest_hash(source_session_id).await?;
         let manifest = ArchiveManifest::from_encoded(&encoded, previous_manifest_hash)?;
         let staged = self.archive.stage(encoded).await?;

@@ -110,6 +110,18 @@ pub enum ArchiveError {
 
 /// Permanent raw archive boundary.
 pub trait RawArchive: Send + Sync {
+    /// Finds an already committed exact object for a source range.
+    ///
+    /// This makes a full at-least-once replay idempotent even after the
+    /// session manifest head has advanced.
+    fn committed_range(
+        &self,
+        source_session_id: [u8; 16],
+        first_collector_sequence: u64,
+        last_collector_sequence: u64,
+        object_sha256: [u8; 32],
+    ) -> impl Future<Output = Result<Option<ManifestAck>, ArchiveError>> + Send;
+
     /// Stages exact compressed bytes without making them replayable.
     fn stage(
         &self,
