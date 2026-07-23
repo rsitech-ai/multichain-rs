@@ -1,0 +1,75 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-14
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.97.1
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-about@0.9.1
+
+      - name: Build release bundle
+        run: ./scripts/release/build-release.sh "${GITHUB_REF_NAME}"
+
+      - name: Smoke release bundle
+        shell: bash
+        run: |
+          target="$(rustc -Vv | awk '/^host:/ {print $2}')"
+          ./scripts/release/smoke-release.sh \
+            "dist/multichain-rs-${GITHUB_REF_NAME}-${target}.tar.gz" \
+            "dist/multichain-rs-${GITHUB_REF_NAME}-${target}.tar.gz.sha256"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ runner.os }}-${{ runner.arch }}
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    name: publish GitHub release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Create developer preview release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --verify-tag \
+            --prerelease \
+            --title "Multichain ${GITHUB_REF_NAME} developer preview" \
+            --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
+            dist/*

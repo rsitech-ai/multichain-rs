@@ -30,7 +30,7 @@ jobs:
 
       - uses: taiki-e/install-action@v2
         with:
-          tool: cargo-deny,just
+          tool: cargo-about@0.9.1,cargo-deny,just
 
       - name: Install Gitleaks
         run: go install github.com/gitleaks/gitleaks/v8@v8.30.1
@@ -58,6 +58,12 @@ jobs:
         run: |
           cargo deny check
           cargo deny list > artifacts/dependency-licenses.txt
+          cargo about generate \
+            --workspace \
+            --locked \
+            --fail \
+            --output-file artifacts/third-party-licenses.html \
+            scripts/release/third-party-licenses.hbs
           gitleaks detect --no-banner
 
       - name: Compose validation
@@ -81,6 +87,15 @@ jobs:
             --output-signature artifacts/platform.binpb.sig \
             artifacts/platform.binpb
           rm cosign.key cosign.pub
+
+      - name: Build and smoke release bundle
+        run: |
+          ./scripts/release/build-release.sh v0.1.0
+          ./scripts/release/smoke-release.sh \
+            "dist/multichain-rs-v0.1.0-$(rustc -Vv | awk '/^host:/ {print $2}').tar.gz" \
+            "dist/multichain-rs-v0.1.0-$(rustc -Vv | awk '/^host:/ {print $2}').tar.gz.sha256"
+          mkdir -p artifacts/release
+          cp dist/* artifacts/release/
 
       - uses: actions/upload-artifact@v4
         with:

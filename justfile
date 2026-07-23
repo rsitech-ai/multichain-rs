@@ -26,6 +26,12 @@ infra-down:
 validate-local chain="all":
     ./scripts/validate-local.sh --chain "{{chain}}"
 
+release-build version="v0.1.0":
+    ./scripts/release/build-release.sh "{{version}}"
+
+release-smoke archive checksum:
+    ./scripts/release/smoke-release.sh "{{archive}}" "{{checksum}}"
+
 verify-task4:
     MULTICHAIN_REQUIRE_INFRA=1 cargo test -p integration-tests --test wal_broker_archive -- --nocapture
 
