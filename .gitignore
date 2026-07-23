@@ -3,5 +3,6 @@
 /apps/web/node_modules/
 /apps/web/.next/
 /artifacts/certification/
+/artifacts/local-validation/
 *.profraw
 .DS_Store
