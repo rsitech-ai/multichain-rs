@@ -84,6 +84,12 @@ impl BitcoinTransaction {
         Wtxid(self.inner.compute_wtxid().to_byte_array())
     }
 
+    /// Returns whether this transaction has the canonical coinbase input.
+    #[must_use]
+    pub fn is_coinbase(&self) -> bool {
+        self.inner.is_coinbase()
+    }
+
     /// Returns all owned inputs.
     #[must_use]
     pub fn inputs(&self) -> &[BitcoinInput] {

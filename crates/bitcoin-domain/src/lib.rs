@@ -9,7 +9,7 @@ mod script;
 mod transaction;
 
 pub use amount::Sats;
-pub use block::{BitcoinBlock, BlockHash};
+pub use block::{BitcoinBlock, BlockHash, BlockWork};
 pub use error::ParseError;
 pub use outpoint::OutPoint;
 pub use parse::{parse_block, parse_transaction};
