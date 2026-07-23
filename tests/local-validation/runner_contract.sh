@@ -36,4 +36,33 @@ if ! grep -Fq "'[regtest]'" "$bitcoin_runner"; then
   exit 1
 fi
 
+grep -Fq 'readonly RETH_VERSION="2.2.0"' \
+  "$REPOSITORY_ROOT/scripts/local-validation/ethereum.sh"
+grep -Fq 'readonly BSC_VERSION="1.7.3"' \
+  "$REPOSITORY_ROOT/scripts/local-validation/bsc.sh"
+if grep -Eq '^[[:space:]]*--dev([[:space:]\\]|$)' \
+  "$REPOSITORY_ROOT/scripts/local-validation/bsc.sh"; then
+  printf '%s\n' 'BSC 1.7.3 no longer supports the --dev flag' >&2
+  exit 1
+fi
+
+if grep -REq '\$\{[^}]+,,\}' "$REPOSITORY_ROOT/scripts/local-validation"; then
+  printf '%s\n' 'Bash 4 lowercase expansion is not portable to macOS Bash 3.2' >&2
+  exit 1
+fi
+
+# shellcheck source=scripts/local-validation/common.sh
+source "$REPOSITORY_ROOT/scripts/local-validation/common.sh"
+rpc_result="$(lv_rpc_result \
+  '{"jsonrpc":"2.0","id":1,"result":"0xabc"}' \
+  'contract success')"
+[[ "$rpc_result" == "0xabc" ]]
+if lv_rpc_result \
+  '{"jsonrpc":"2.0","id":1,"error":{"code":-32000,"message":"rejected"}}' \
+  'contract failure' \
+  >/dev/null 2>&1; then
+  printf '%s\n' 'JSON-RPC error unexpectedly produced a result' >&2
+  exit 1
+fi
+
 printf '%s\n' 'local validation runner contract: passed'

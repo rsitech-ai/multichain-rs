@@ -108,6 +108,19 @@ lv_rpc() {
     "$url"
 }
 
+lv_rpc_result() {
+  local response="$1"
+  local context="$2"
+  local error
+
+  if ! jq -e '(.error == null) and (.result != null)' <<<"$response" >/dev/null; then
+    error="$(jq -c '.error // .' <<<"$response" 2>/dev/null || printf '%s' "$response")"
+    printf '%s failed: %s\n' "$context" "$error" >&2
+    return 1
+  fi
+  jq -r '.result | if type == "string" then . else tojson end' <<<"$response"
+}
+
 lv_wait_for_rpc() {
   local url="$1"
   local method="$2"
