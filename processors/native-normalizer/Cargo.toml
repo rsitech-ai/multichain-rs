@@ -8,6 +8,7 @@ license.workspace = true
 [dependencies]
 bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
 chain-domain = { path = "../../crates/chain-domain", version = "=0.1.0" }
+evm-domain = { path = "../../crates/evm-domain", version = "=0.1.0" }
 fact-envelope = { path = "../../crates/fact-envelope", version = "=0.1.0" }
 platform-proto = { path = "../../crates/platform-proto", version = "=0.1.0" }
 prost.workspace = true

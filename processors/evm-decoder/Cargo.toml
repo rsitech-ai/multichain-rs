@@ -1,19 +1,16 @@
 [package]
-name = "api-contract"
+name = "evm-decoder"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
 [dependencies]
-bitcoin-domain = { path = "../bitcoin-domain", version = "=0.1.0" }
 blake3.workspace = true
-evm-domain = { path = "../evm-domain", version = "=0.1.0" }
+evm-domain = { path = "../../crates/evm-domain", version = "=0.1.0" }
 serde.workspace = true
-thiserror.workspace = true
-
-[dev-dependencies]
 serde_json.workspace = true
+thiserror.workspace = true
 
 [lints]
 workspace = true

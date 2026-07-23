@@ -3,6 +3,7 @@
 use std::fmt::Write as _;
 
 use bitcoin_domain::Sats;
+use evm_domain::EvmNetwork;
 use serde::Serialize;
 use thiserror::Error;
 
@@ -112,6 +113,113 @@ pub struct BitcoinOutput {
     value_sats: Sats,
     script_pubkey_hex: String,
     truth: BitcoinTruth,
+}
+
+/// Explicit EVM historical capability flags.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+pub struct EvmCoverage {
+    /// Native blocks/transactions/receipts/logs are covered for the request.
+    pub full_history: bool,
+    /// Arbitrary historical state is covered by an archive node.
+    pub archive_state: bool,
+    /// Historical execution traces are covered.
+    pub traces: bool,
+}
+
+impl EvmCoverage {
+    /// Constructs explicit, independently queryable capability flags.
+    #[must_use]
+    pub const fn new(full_history: bool, archive_state: bool, traces: bool) -> Self {
+        Self {
+            full_history,
+            archive_state,
+            traces,
+        }
+    }
+}
+
+/// Source-qualified EVM truth with chain-native finality vocabulary.
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+pub struct EvmTruth {
+    chain_id: u64,
+    network: &'static str,
+    source_ids: Vec<String>,
+    revision: u64,
+    canonicality: String,
+    finality: String,
+    completeness: Completeness,
+    coverage: EvmCoverage,
+    as_of_unix_ns: i64,
+}
+
+impl EvmTruth {
+    /// Constructs validated Ethereum or BSC response truth.
+    ///
+    /// # Errors
+    ///
+    /// Rejects missing sources, zero revision, invalid canonicality, finality
+    /// vocabulary from the other EVM chain, and contradictory reorg status.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new<I, S>(
+        network: EvmNetwork,
+        source_ids: I,
+        revision: u64,
+        canonicality: impl Into<String>,
+        finality: impl Into<String>,
+        completeness: Completeness,
+        coverage: EvmCoverage,
+        as_of_unix_ns: i64,
+    ) -> Result<Self, TruthError>
+    where
+        I: IntoIterator<Item = S>,
+        S: Into<String>,
+    {
+        let source_ids = validated_sources(source_ids)?;
+        if revision == 0 {
+            return Err(TruthError::ZeroRevision);
+        }
+        let canonicality = canonicality.into();
+        if !matches!(
+            canonicality.as_str(),
+            "candidate" | "canonical" | "non_canonical"
+        ) {
+            return Err(TruthError::InvalidEvmCanonicality(canonicality));
+        }
+        let finality = finality.into();
+        let valid_finality = match network {
+            EvmNetwork::EthereumMainnet => matches!(
+                finality.as_str(),
+                "pending" | "included" | "canonical_head" | "safe" | "finalized" | "reorged"
+            ),
+            EvmNetwork::BscMainnet => matches!(
+                finality.as_str(),
+                "pending" | "included" | "canonical_head" | "fast_finalized" | "reorged"
+            ),
+        };
+        if !valid_finality {
+            return Err(TruthError::InvalidEvmFinality {
+                chain_id: network.chain_id(),
+                finality,
+            });
+        }
+        if (canonicality == "non_canonical") != (finality == "reorged") {
+            return Err(TruthError::InconsistentEvmStatus {
+                canonicality,
+                finality,
+            });
+        }
+        Ok(Self {
+            chain_id: network.chain_id(),
+            network: network.as_str(),
+            source_ids,
+            revision,
+            canonicality,
+            finality,
+            completeness,
+            coverage,
+            as_of_unix_ns,
+        })
+    }
 }
 
 impl BitcoinOutput {
@@ -395,6 +503,25 @@ pub enum TruthError {
     /// Bitcoin canonicality or finality text was unknown.
     #[error("invalid bitcoin status pair {canonicality}/{finality}")]
     InvalidBitcoinStatus {
+        /// Supplied canonicality.
+        canonicality: String,
+        /// Supplied finality.
+        finality: String,
+    },
+    /// EVM canonicality text was unknown.
+    #[error("invalid EVM canonicality {0}")]
+    InvalidEvmCanonicality(String),
+    /// Finality text did not belong to the selected EVM chain.
+    #[error("invalid finality {finality} for EVM chain ID {chain_id}")]
+    InvalidEvmFinality {
+        /// Selected EIP-155 chain ID.
+        chain_id: u64,
+        /// Supplied finality.
+        finality: String,
+    },
+    /// EVM canonicality/finality contradicted each other.
+    #[error("inconsistent EVM status pair {canonicality}/{finality}")]
+    InconsistentEvmStatus {
         /// Supplied canonicality.
         canonicality: String,
         /// Supplied finality.

@@ -1,10 +1,15 @@
 #![doc = "Deterministic native normalization and Phase 0 `ClickHouse` projection."]
 
 mod bitcoin;
+mod evm;
 
 pub use bitcoin::{
     BITCOIN_PARSER_VERSION, BitcoinBlockFactRow, BitcoinFactBatch, BitcoinFactContext,
     BitcoinFactError, BitcoinInputFactRow, BitcoinOutputFactRow, BitcoinTransactionFactRow,
+};
+pub use evm::{
+    EVM_PARSER_VERSION, EvmBlockFactRow, EvmFactBatch, EvmFactContext, EvmFactError, EvmLogFactRow,
+    EvmReceiptFactRow, EvmTransactionFactRow,
 };
 
 use fact_envelope::{
@@ -22,6 +27,8 @@ use thiserror::Error;
 const FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/001_core.sql");
 /// Append-only Bitcoin fact tables and explicit current projections.
 pub const BITCOIN_FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/002_bitcoin.sql");
+/// Append-only EVM fact tables keyed by EIP-155 chain ID.
+pub const EVM_FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/003_evm.sql");
 
 /// Explicit state for a source range that cannot yet be proven complete.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -134,7 +141,7 @@ impl ClickHouseFactStore {
     ///
     /// Returns [`NormalizerError`] on the first rejected statement.
     pub async fn install_schema(&self) -> Result<(), NormalizerError> {
-        for statement in [FACT_SCHEMA, BITCOIN_FACT_SCHEMA]
+        for statement in [FACT_SCHEMA, BITCOIN_FACT_SCHEMA, EVM_FACT_SCHEMA]
             .join("\n")
             .split(';')
             .map(str::trim)
@@ -187,6 +194,22 @@ impl ClickHouseFactStore {
         self.insert_json_rows("multichain.bitcoin_inputs", &batch.inputs)
             .await?;
         self.insert_json_rows("multichain.bitcoin_outputs", &batch.outputs)
+            .await
+    }
+
+    /// Inserts one EVM native block batch into append-only fact tables.
+    ///
+    /// # Errors
+    ///
+    /// Returns the first serialization, transport, or `ClickHouse` failure.
+    pub async fn insert_evm_batch(&self, batch: &EvmFactBatch) -> Result<(), NormalizerError> {
+        self.insert_json_rows("multichain.evm_blocks", &batch.blocks)
+            .await?;
+        self.insert_json_rows("multichain.evm_transactions", &batch.transactions)
+            .await?;
+        self.insert_json_rows("multichain.evm_receipts", &batch.receipts)
+            .await?;
+        self.insert_json_rows("multichain.evm_logs", &batch.logs)
             .await
     }
 

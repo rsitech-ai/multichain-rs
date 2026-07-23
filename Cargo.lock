@@ -83,6 +83,7 @@ version = "0.1.0"
 dependencies = [
  "bitcoin-domain",
  "blake3",
+ "evm-domain",
  "serde",
  "serde_json",
  "thiserror 2.0.19",
@@ -862,6 +863,17 @@ name = "evm-canonicality"
 version = "0.1.0"
 dependencies = [
  "evm-domain",
+ "thiserror 2.0.19",
+]
+
+[[package]]
+name = "evm-decoder"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "evm-domain",
+ "serde",
+ "serde_json",
  "thiserror 2.0.19",
 ]
 
@@ -1691,6 +1703,7 @@ version = "0.1.0"
 dependencies = [
  "bitcoin-domain",
  "chain-domain",
+ "evm-domain",
  "fact-envelope",
  "platform-proto",
  "prost",

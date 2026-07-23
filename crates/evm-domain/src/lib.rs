@@ -233,6 +233,42 @@ impl EvmTransaction {
     pub const fn to(&self) -> Option<Address> {
         self.to
     }
+
+    /// Sender recovered by the execution source.
+    #[must_use]
+    pub const fn from(&self) -> Address {
+        self.from
+    }
+
+    /// Exact transaction value.
+    #[must_use]
+    pub const fn value(&self) -> EvmAmount {
+        self.value
+    }
+
+    /// Sender nonce.
+    #[must_use]
+    pub const fn nonce(&self) -> u64 {
+        self.nonce
+    }
+
+    /// Transaction gas limit.
+    #[must_use]
+    pub const fn gas_limit(&self) -> u64 {
+        self.gas_limit
+    }
+
+    /// EIP-1559 maximum fee, when present.
+    #[must_use]
+    pub const fn max_fee_per_gas(&self) -> Option<EvmAmount> {
+        self.max_fee_per_gas
+    }
+
+    /// EIP-4844 versioned blob hashes.
+    #[must_use]
+    pub fn blob_versioned_hashes(&self) -> &[B256] {
+        &self.blob_versioned_hashes
+    }
 }
 
 /// One ordered EVM execution log.
@@ -280,6 +316,24 @@ impl EvmLog {
     #[must_use]
     pub const fn log_index(&self) -> u64 {
         self.log_index
+    }
+
+    /// Emitting contract.
+    #[must_use]
+    pub const fn address(&self) -> Address {
+        self.address
+    }
+
+    /// Exact ordered topics.
+    #[must_use]
+    pub fn topics(&self) -> &[B256] {
+        &self.topics
+    }
+
+    /// Exact unparsed log data.
+    #[must_use]
+    pub fn data(&self) -> &[u8] {
+        &self.data
     }
 }
 
@@ -329,6 +383,24 @@ impl EvmReceipt {
     #[must_use]
     pub const fn transaction_hash(&self) -> B256 {
         self.transaction_hash
+    }
+
+    /// Execution success status.
+    #[must_use]
+    pub const fn success(&self) -> bool {
+        self.success
+    }
+
+    /// Cumulative gas used through this receipt.
+    #[must_use]
+    pub const fn cumulative_gas_used(&self) -> u64 {
+        self.cumulative_gas_used
+    }
+
+    /// Ordered raw logs.
+    #[must_use]
+    pub fn logs(&self) -> &[EvmLog] {
+        &self.logs
     }
 }
 
@@ -382,6 +454,36 @@ impl EvmBlock {
     #[must_use]
     pub fn transactions(&self) -> &[EvmTransaction] {
         &self.transactions
+    }
+
+    /// Network identity.
+    #[must_use]
+    pub const fn network(&self) -> EvmNetwork {
+        self.network
+    }
+
+    /// Block number.
+    #[must_use]
+    pub const fn number(&self) -> u64 {
+        self.number
+    }
+
+    /// Block hash.
+    #[must_use]
+    pub const fn hash(&self) -> B256 {
+        self.hash
+    }
+
+    /// Parent block hash.
+    #[must_use]
+    pub const fn parent_hash(&self) -> B256 {
+        self.parent_hash
+    }
+
+    /// Ordered receipts.
+    #[must_use]
+    pub fn receipts(&self) -> &[EvmReceipt] {
+        &self.receipts
     }
 }
 
