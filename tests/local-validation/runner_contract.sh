@@ -44,6 +44,8 @@ grep -Fq 'readonly AGAVE_VERSION="4.1.2"' \
   "$REPOSITORY_ROOT/scripts/local-validation/solana.sh"
 grep -Fq 'readonly SOLANA_DYNAMIC_PORT_END="18936"' \
   "$REPOSITORY_ROOT/scripts/local-validation/solana.sh"
+grep -Fq 'multichain-validation-' \
+  "$REPOSITORY_ROOT/scripts/local-validation/platform.sh"
 if grep -Eq '^[[:space:]]*--dev([[:space:]\\]|$)' \
   "$REPOSITORY_ROOT/scripts/local-validation/bsc.sh"; then
   printf '%s\n' 'BSC 1.7.3 no longer supports the --dev flag' >&2
@@ -52,6 +54,11 @@ fi
 
 if grep -REq '\$\{[^}]+,,\}' "$REPOSITORY_ROOT/scripts/local-validation"; then
   printf '%s\n' 'Bash 4 lowercase expansion is not portable to macOS Bash 3.2' >&2
+  exit 1
+fi
+if grep -REq '\|[[:space:]]*head([[:space:]]|$)|head -1' \
+  "$REPOSITORY_ROOT/scripts/local-validation"; then
+  printf '%s\n' 'head may turn a successful producer into SIGPIPE under pipefail' >&2
   exit 1
 fi
 

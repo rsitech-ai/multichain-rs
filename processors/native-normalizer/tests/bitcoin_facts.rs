@@ -65,7 +65,8 @@ fn native_block_rows_preserve_integer_amounts_identity_and_lineage() {
 fn revision_rows_are_append_only_and_current_queries_are_explicit() {
     assert!(BITCOIN_FACT_SCHEMA.contains("ENGINE = MergeTree"));
     assert!(!BITCOIN_FACT_SCHEMA.contains("ReplacingMergeTree"));
-    assert!(BITCOIN_FACT_SCHEMA.contains("argMax(canonicality, revision)"));
+    assert!(BITCOIN_FACT_SCHEMA.contains("argMax(canonicality, source.revision)"));
+    assert!(!BITCOIN_FACT_SCHEMA.contains("max(revision) AS revision"));
     assert!(BITCOIN_FACT_SCHEMA.contains("bitcoin_blocks_current"));
     assert!(BITCOIN_FACT_SCHEMA.contains("bitcoin_mempool_membership_revisions"));
 

@@ -189,16 +189,16 @@ CREATE VIEW IF NOT EXISTS multichain.bitcoin_blocks_current AS
 SELECT
     network,
     block_hash,
-    argMax(parent_block_hash, revision) AS parent_block_hash,
-    argMax(height, revision) AS height,
-    argMax(block_time, revision) AS block_time,
-    argMax(transaction_count, revision) AS transaction_count,
-    argMax(canonicality, revision) AS canonicality,
-    max(revision) AS revision,
-    argMax(source_id, revision) AS source_id,
-    argMax(source_session_id, revision) AS source_session_id,
-    argMax(observation_id, revision) AS observation_id,
-    argMax(parser_version, revision) AS parser_version,
-    argMax(recorded_at_unix_ns, revision) AS recorded_at_unix_ns
-FROM multichain.bitcoin_blocks
+    argMax(parent_block_hash, source.revision) AS parent_block_hash,
+    argMax(height, source.revision) AS height,
+    argMax(block_time, source.revision) AS block_time,
+    argMax(transaction_count, source.revision) AS transaction_count,
+    argMax(canonicality, source.revision) AS canonicality,
+    max(source.revision) AS revision,
+    argMax(source_id, source.revision) AS source_id,
+    argMax(source_session_id, source.revision) AS source_session_id,
+    argMax(observation_id, source.revision) AS observation_id,
+    argMax(parser_version, source.revision) AS parser_version,
+    argMax(recorded_at_unix_ns, source.revision) AS recorded_at_unix_ns
+FROM multichain.bitcoin_blocks AS source
 GROUP BY network, block_hash;

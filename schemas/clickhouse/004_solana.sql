@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS multichain.solana_instructions
     recorded_at_unix_ns Int64
 )
 ENGINE = MergeTree
-ORDER BY (signature, slot, blockhash, outer_index, inner_index, revision);
+ORDER BY (signature, slot, blockhash, outer_index, isNull(inner_index), ifNull(inner_index, 0), revision);
 
 CREATE TABLE IF NOT EXISTS multichain.solana_logs
 (
@@ -143,26 +143,26 @@ SELECT
     signature,
     slot,
     blockhash,
-    argMax(canonicality, revision) AS canonicality,
-    argMax(commitment, revision) AS commitment,
-    max(revision) AS revision,
-    argMax(source_id, revision) AS source_id,
-    argMax(observation_id, revision) AS observation_id
-FROM multichain.solana_transactions
+    argMax(canonicality, source.revision) AS canonicality,
+    argMax(commitment, source.revision) AS commitment,
+    max(source.revision) AS revision,
+    argMax(source_id, source.revision) AS source_id,
+    argMax(observation_id, source.revision) AS observation_id
+FROM multichain.solana_transactions AS source
 GROUP BY signature, slot, blockhash;
 
 CREATE VIEW IF NOT EXISTS multichain.solana_account_writes_current AS
 SELECT
     pubkey,
-    argMax(slot, revision) AS slot,
-    argMax(blockhash, revision) AS blockhash,
-    argMax(owner, revision) AS owner,
-    argMax(lamports, revision) AS lamports,
-    argMax(raw_data_hex, revision) AS raw_data_hex,
-    argMax(commitment, revision) AS commitment,
-    max(revision) AS revision,
-    argMax(source_id, revision) AS source_id,
-    argMax(observation_id, revision) AS observation_id
-FROM multichain.solana_account_writes
+    argMax(slot, source.revision) AS slot,
+    argMax(blockhash, source.revision) AS blockhash,
+    argMax(owner, source.revision) AS owner,
+    argMax(lamports, source.revision) AS lamports,
+    argMax(raw_data_hex, source.revision) AS raw_data_hex,
+    argMax(commitment, source.revision) AS commitment,
+    max(source.revision) AS revision,
+    argMax(source_id, source.revision) AS source_id,
+    argMax(observation_id, source.revision) AS observation_id
+FROM multichain.solana_account_writes AS source
 GROUP BY pubkey
 HAVING commitment != 'dead';
