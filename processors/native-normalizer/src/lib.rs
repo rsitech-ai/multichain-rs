@@ -1,5 +1,12 @@
 #![doc = "Deterministic native normalization and Phase 0 `ClickHouse` projection."]
 
+mod bitcoin;
+
+pub use bitcoin::{
+    BITCOIN_PARSER_VERSION, BitcoinBlockFactRow, BitcoinFactBatch, BitcoinFactContext,
+    BitcoinFactError, BitcoinInputFactRow, BitcoinOutputFactRow, BitcoinTransactionFactRow,
+};
+
 use fact_envelope::{
     FIXTURE_PARSER_VERSION, FactError, FixtureFact, FixtureFactView, FixtureLineage,
     FixturePayload, encode_hex, fixture_fact_id, fixture_fact_key,
@@ -13,6 +20,8 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 const FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/001_core.sql");
+/// Append-only Bitcoin fact tables and explicit current projections.
+pub const BITCOIN_FACT_SCHEMA: &str = include_str!("../../../schemas/clickhouse/002_bitcoin.sql");
 
 /// Explicit state for a source range that cannot yet be proven complete.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -125,7 +134,8 @@ impl ClickHouseFactStore {
     ///
     /// Returns [`NormalizerError`] on the first rejected statement.
     pub async fn install_schema(&self) -> Result<(), NormalizerError> {
-        for statement in FACT_SCHEMA
+        for statement in [FACT_SCHEMA, BITCOIN_FACT_SCHEMA]
+            .join("\n")
             .split(';')
             .map(str::trim)
             .filter(|statement| !statement.is_empty())
@@ -155,6 +165,29 @@ impl ClickHouseFactStore {
         )
         .await
         .map(|_| ())
+    }
+
+    /// Inserts one native Bitcoin block batch into append-only fact tables.
+    ///
+    /// Each table is sent as one `JSONEachRow` batch. Empty child collections
+    /// are skipped, and an error prevents the caller from acknowledging its
+    /// broker offset.
+    ///
+    /// # Errors
+    ///
+    /// Returns the first serialization, transport, or `ClickHouse` failure.
+    pub async fn insert_bitcoin_batch(
+        &self,
+        batch: &BitcoinFactBatch,
+    ) -> Result<(), NormalizerError> {
+        self.insert_json_rows("multichain.bitcoin_blocks", &batch.blocks)
+            .await?;
+        self.insert_json_rows("multichain.bitcoin_transactions", &batch.transactions)
+            .await?;
+        self.insert_json_rows("multichain.bitcoin_inputs", &batch.inputs)
+            .await?;
+        self.insert_json_rows("multichain.bitcoin_outputs", &batch.outputs)
+            .await
     }
 
     /// Removes a named fixture synchronously for isolated acceptance tests.
@@ -254,6 +287,28 @@ impl ClickHouseFactStore {
 
     async fn execute(&self, query: &str) -> Result<(), NormalizerError> {
         self.request(query, Vec::new(), &[]).await.map(|_| ())
+    }
+
+    async fn insert_json_rows<T: Serialize>(
+        &self,
+        table: &str,
+        rows: &[T],
+    ) -> Result<(), NormalizerError> {
+        if rows.is_empty() {
+            return Ok(());
+        }
+        let mut body = Vec::new();
+        for row in rows {
+            serde_json::to_writer(&mut body, row).map_err(NormalizerError::InvalidPayload)?;
+            body.push(b'\n');
+        }
+        self.request(
+            &format!("INSERT INTO {table} FORMAT JSONEachRow"),
+            body,
+            &[],
+        )
+        .await
+        .map(|_| ())
     }
 
     async fn request(

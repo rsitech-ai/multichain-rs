@@ -1516,6 +1516,8 @@ dependencies = [
 name = "native-normalizer"
 version = "0.1.0"
 dependencies = [
+ "bitcoin-domain",
+ "chain-domain",
  "fact-envelope",
  "platform-proto",
  "prost",
