@@ -30,4 +30,10 @@ if "$RUNNER" --dry-run --evidence-dir relative/path >/dev/null 2>&1; then
   exit 1
 fi
 
+bitcoin_runner="$REPOSITORY_ROOT/scripts/local-validation/bitcoin.sh"
+if ! grep -Fq "'[regtest]'" "$bitcoin_runner"; then
+  printf '%s\n' 'Bitcoin network-specific ports are not scoped under [regtest]' >&2
+  exit 1
+fi
+
 printf '%s\n' 'local validation runner contract: passed'

@@ -221,7 +221,20 @@ lv_chain_error() {
 lv_chain_cleanup() {
   local pid
   local container
+  local stopped_pids=0
+  local removed_containers=0
   trap - ERR
+  if [[ "${LV_KEEP_RUNTIME:-0}" == "1" ]]; then
+    if [[ -n "$LV_CHAIN_EVIDENCE" ]]; then
+      jq -n \
+        --arg status "retained_by_request" \
+        --argjson process_count "${#LV_PIDS[@]}" \
+        --argjson container_count "${#LV_CONTAINERS[@]}" \
+        '{status:$status,process_count:$process_count,container_count:$container_count}' \
+        >"$LV_CHAIN_EVIDENCE/cleanup.json"
+    fi
+    return
+  fi
   for pid in "${LV_PIDS[@]:-}"; do
     if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
       kill "$pid" 2>/dev/null || true
@@ -230,11 +243,21 @@ lv_chain_cleanup() {
         sleep 0.1
       done
       kill -KILL "$pid" 2>/dev/null || true
+      stopped_pids=$((stopped_pids + 1))
     fi
   done
   for container in "${LV_CONTAINERS[@]:-}"; do
     if [[ -n "$container" ]]; then
       docker rm --force "$container" >/dev/null 2>&1 || true
+      removed_containers=$((removed_containers + 1))
     fi
   done
+  if [[ -n "$LV_CHAIN_EVIDENCE" ]]; then
+    jq -n \
+      --arg status "cleaned" \
+      --argjson stopped_pids "$stopped_pids" \
+      --argjson removed_containers "$removed_containers" \
+      '{status:$status,stopped_pids:$stopped_pids,removed_containers:$removed_containers}' \
+      >"$LV_CHAIN_EVIDENCE/cleanup.json"
+  fi
 }
