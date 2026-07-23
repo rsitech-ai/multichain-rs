@@ -5,5 +5,27 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
+[dependencies]
+async-trait.workspace = true
+bitcoin = { workspace = true, features = ["std"] }
+bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
+observation-envelope = { path = "../../crates/observation-envelope", version = "=0.1.0" }
+platform-proto = { path = "../../crates/platform-proto", version = "=0.1.0" }
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+getrandom.workspace = true
+storage-adapters = { path = "../../crates/storage-adapters", version = "=0.1.0" }
+storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }
+thiserror.workspace = true
+tokio = { workspace = true, features = ["fs", "macros", "rt-multi-thread", "signal", "sync", "time"] }
+tokio-util.workspace = true
+wal = { path = "../../crates/wal", version = "=0.1.0" }
+zeromq.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+test-fixtures = { path = "../../crates/test-fixtures", version = "=0.1.0" }
+
 [lints]
 workspace = true

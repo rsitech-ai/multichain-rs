@@ -18,11 +18,13 @@ version = "0.1.0"
 
 [workspace.dependencies]
 alloy = { version = "=2.2.0", default-features = false }
+async-trait = { version = "=0.1.91", default-features = false }
 axum = { version = "=0.8.9", default-features = false }
 bitcoin = { version = "=0.32.101", default-features = false }
 blake3 = { version = "=1.8.5", default-features = false, features = ["std"] }
 crc32c = { version = "=0.6.8", default-features = false }
 futures-util = { version = "=0.3.33", default-features = false, features = ["sink", "std"] }
+getrandom = { version = "=0.4.3", default-features = false }
 object_store = { version = "=0.14.1", default-features = false, features = ["aws"] }
 prost = { version = "=0.14.4", default-features = false, features = ["derive", "std"] }
 rdkafka = { version = "=0.39.0", default-features = false, features = ["cmake-build", "tokio"] }
@@ -35,9 +37,11 @@ time = { version = "=0.3.54", default-features = false }
 thiserror = { version = "=2.0.19", default-features = false }
 tokio = { version = "=1.51.0", default-features = false }
 tokio-tungstenite = { version = "=0.29.0", default-features = false, features = ["connect", "handshake"] }
+tokio-util = { version = "=0.7.19", default-features = false, features = ["rt"] }
 tonic = { version = "=0.14.6", default-features = false }
 tempfile = { version = "=3.23.0", default-features = false }
 zstd = { version = "=0.13.3", default-features = false }
+zeromq = { version = "=0.6.0", default-features = false, features = ["tcp-transport", "tokio-runtime"] }
 
 [workspace.lints.rust]
 unsafe_code = "deny"
