@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "capture_note": "Semantic subsets captured from public mainnet eth_getBlockByNumber(0x0,false) responses on 2026-07-23; connector observations retain the complete exact response.",
+  "fixtures": [
+    {
+      "file": "ethereum-mainnet-genesis.json",
+      "sha256": "ad8308788e278a080f6348a40599024f72e2946a0c93313bfd208cd3f8a1d977",
+      "chain_id": 1,
+      "block_hash": "0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3"
+    },
+    {
+      "file": "bsc-mainnet-genesis.json",
+      "sha256": "1e946a5f3c593ad8a723343c5b47ddfba11bd3e5d4e57d5f0f4ed7d055b97775",
+      "chain_id": 56,
+      "block_hash": "0x0d21840abff46b96c84b2ac9e10e4f5cdaeb5693cb665db62a2f3b02d2d57b5b"
+    }
+  ]
+}

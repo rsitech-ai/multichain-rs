@@ -1,5 +1,8 @@
 [advisories]
 yanked = "deny"
+ignore = [
+  { id = "RUSTSEC-2024-0436", reason = "Alloy 2.2.0 requires alloy-primitives 1.6.1, which uses paste only at compile time; no maintained compatible upstream release removes it. Re-evaluate on every Alloy upgrade." },
+]
 
 [bans]
 multiple-versions = "warn"
