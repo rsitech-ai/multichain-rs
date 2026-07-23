@@ -32,8 +32,8 @@ fi
   shasum -a 256 -c "$checksum_name"
 )
 
-if tar -tzf "$archive_path" | grep -Eq '(^/|(^|/)\.\.(/|$))'; then
-  echo "archive contains an unsafe path" >&2
+if tar -tzf "$archive_path" | grep -Eq '(^/|(^|/)\.\.(/|$)|(^|/)\.DS_Store$)'; then
+  echo "archive contains an unsafe or irrelevant path" >&2
   exit 65
 fi
 

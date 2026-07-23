@@ -116,6 +116,12 @@ cp docs/operations/four-chain-acceptance.md "$bundle_root/docs/"
 cp "$release_notes_path" "$bundle_root/docs/"
 cp scripts/release/smoke-bundle.sh "$bundle_root/smoke.sh"
 chmod +x "$bundle_root/smoke.sh"
+find "$bundle_root" -name .DS_Store -type f -delete
+
+if find "$bundle_root" -name .DS_Store -type f -print | grep -q .; then
+  echo "release staging contains Finder metadata" >&2
+  exit 70
+fi
 
 cargo about generate \
   --workspace \
