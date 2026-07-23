@@ -1,0 +1,4 @@
+{"channel":"rawtx","source_message_type":"rawtx","payload":"transaction-a"}
+{"channel":"sequence","source_message_type":"mempool-add","payload":"sequence-a"}
+{"channel":"rawblock","source_message_type":"rawblock","payload":"block-a"}
+{"channel":"sequence","source_message_type":"block-connect","payload":"sequence-b"}

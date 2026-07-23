@@ -5,5 +5,17 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
+[dependencies]
+blake3.workspace = true
+crc32c.workspace = true
+observation-envelope = { path = "../observation-envelope", version = "=0.1.0" }
+platform-proto = { path = "../platform-proto", version = "=0.1.0" }
+prost.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+test-fixtures = { path = "../test-fixtures", version = "=0.1.0" }
+
 [lints]
 workspace = true
