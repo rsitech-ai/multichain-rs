@@ -40,6 +40,10 @@ grep -Fq 'readonly RETH_VERSION="2.2.0"' \
   "$REPOSITORY_ROOT/scripts/local-validation/ethereum.sh"
 grep -Fq 'readonly BSC_VERSION="1.7.3"' \
   "$REPOSITORY_ROOT/scripts/local-validation/bsc.sh"
+grep -Fq 'readonly AGAVE_VERSION="4.1.2"' \
+  "$REPOSITORY_ROOT/scripts/local-validation/solana.sh"
+grep -Fq 'readonly SOLANA_DYNAMIC_PORT_END="18936"' \
+  "$REPOSITORY_ROOT/scripts/local-validation/solana.sh"
 if grep -Eq '^[[:space:]]*--dev([[:space:]\\]|$)' \
   "$REPOSITORY_ROOT/scripts/local-validation/bsc.sh"; then
   printf '%s\n' 'BSC 1.7.3 no longer supports the --dev flag' >&2

@@ -256,6 +256,7 @@ lv_chain_cleanup() {
         sleep 0.1
       done
       kill -KILL "$pid" 2>/dev/null || true
+      wait "$pid" 2>/dev/null || true
       stopped_pids=$((stopped_pids + 1))
     fi
   done
