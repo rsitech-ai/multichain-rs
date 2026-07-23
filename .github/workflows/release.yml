@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install --yes --no-install-recommends libcurl4-openssl-dev
 
       - name: Install pinned release tools
-        run: cargo install --locked --version 0.9.1 cargo-about
+        run: cargo install --locked --version 0.9.1 --features cli cargo-about
 
       - name: Build release bundle
         run: ./scripts/release/build-release.sh "${GITHUB_REF_NAME}"

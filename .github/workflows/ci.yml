@@ -27,9 +27,8 @@ jobs:
 
       - name: Install pinned Rust verification tools
         run: |
-          cargo install --locked --version 0.9.1 cargo-about
+          cargo install --locked --version 0.9.1 --features cli cargo-about
           cargo install --locked --version 0.20.2 cargo-deny
-          cargo install --locked --version 1.47.1 just
 
       - name: Install checksum-verified Buf
         run: |
