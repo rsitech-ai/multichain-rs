@@ -3063,6 +3063,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "solana-canonicality"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "solana-domain",
+ "thiserror 2.0.19",
+]
+
+[[package]]
 name = "solana-define-syscall"
 version = "5.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
