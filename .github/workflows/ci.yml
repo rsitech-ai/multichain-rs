@@ -13,7 +13,7 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install pinned Rust toolchain
         run: |
@@ -37,7 +37,7 @@ jobs:
           sudo mv /tmp/buf /usr/local/bin/buf
 
       - name: Install Gitleaks
-        run: go install github.com/gitleaks/gitleaks/v8@v8.30.1
+        run: go install github.com/zricethezav/gitleaks/v8@v8.30.1
 
       - name: Rust formatting
         run: cargo fmt --all -- --check
