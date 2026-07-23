@@ -10,21 +10,29 @@ publish = false
 archive-format = { path = "../../crates/archive-format", version = "=0.1.0" }
 archive-writer = { path = "../../services/archive-writer", version = "=0.1.0" }
 async-trait.workspace = true
+bitcoin.workspace = true
 bitcoin-canonicality = { path = "../../processors/bitcoin-canonicality", version = "=0.1.0" }
 bitcoin-core-connector = { path = "../../connectors/bitcoin-core", version = "=0.1.0" }
 bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
 bitcoin-mempool = { path = "../../processors/bitcoin-mempool", version = "=0.1.0" }
+bs58.workspace = true
 bsc-connector = { path = "../../connectors/bsc", version = "=0.1.0" }
+chain-domain = { path = "../../crates/chain-domain", version = "=0.1.0" }
 ethereum-consensus-connector = { path = "../../connectors/ethereum-consensus", version = "=0.1.0" }
 ethereum-reth-connector = { path = "../../connectors/ethereum-reth", version = "=0.1.0" }
 evm-canonicality = { path = "../../processors/evm-canonicality", version = "=0.1.0" }
 evm-domain = { path = "../../crates/evm-domain", version = "=0.1.0" }
+native-normalizer = { path = "../../processors/native-normalizer", version = "=0.1.0" }
 observation-envelope = { path = "../../crates/observation-envelope", version = "=0.1.0" }
 platform-proto = { path = "../../crates/platform-proto", version = "=0.1.0" }
 prost.workspace = true
 query-api = { path = "../../services/query-api", version = "=0.1.0" }
 rdkafka.workspace = true
+serde.workspace = true
 serde_json.workspace = true
+sha2.workspace = true
+solana-canonicality = { path = "../../processors/solana-canonicality", version = "=0.1.0" }
+solana-domain = { path = "../../crates/solana-domain", version = "=0.1.0" }
 storage-adapters = { path = "../../crates/storage-adapters", version = "=0.1.0" }
 storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }
 tempfile.workspace = true
