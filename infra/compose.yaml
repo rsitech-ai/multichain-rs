@@ -1,0 +1,112 @@
+name: multichain-local
+
+services:
+  redpanda:
+    image: redpandadata/redpanda:v26.1.1
+    command:
+      - redpanda
+      - start
+      - --mode
+      - dev-container
+      - --smp
+      - "1"
+      - --memory
+      - 1G
+      - --reserve-memory
+      - 0M
+      - --check=false
+      - --node-id
+      - "0"
+      - --kafka-addr
+      - internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr
+      - internal://redpanda:9092,external://127.0.0.1:19092
+      - --rpc-addr
+      - 0.0.0.0:33145
+      - --advertise-rpc-addr
+      - redpanda:33145
+    ports:
+      - "127.0.0.1:19092:19092"
+      - "127.0.0.1:19644:9644"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health", "--exit-when-healthy"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+    labels:
+      multichain.topology: development_non_ha
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:26.3-alpine
+    ports:
+      - "127.0.0.1:18123:8123"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/multichain.xml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --spider http://127.0.0.1:8123/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  postgres:
+    image: postgres:18.3-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-multichain}
+      POSTGRES_USER: ${POSTGRES_USER:-multichain}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-multichain} -d ${POSTGRES_DB:-multichain}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-multichain}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local-development-only}
+      MINIO_REGION_NAME: ${MINIO_REGION:-us-east-1}
+    ports:
+      - "127.0.0.1:19000:9000"
+      - "127.0.0.1:19001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://127.0.0.1:9000/minio/health/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  minio-init:
+    profiles: ["setup"]
+    image: quay.io/minio/mc:RELEASE.2025-04-16T18-13-26Z
+    entrypoint: ["/bin/sh"]
+    command: ["/create-buckets.sh"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-multichain}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local-development-only}
+    volumes:
+      - ./minio/create-buckets.sh:/create-buckets.sh:ro
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: "no"
+
+volumes:
+  redpanda-data:
+  clickhouse-data:
+  postgres-data:
+  minio-data:

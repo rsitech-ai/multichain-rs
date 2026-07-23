@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<clickhouse>
+    <listen_host>0.0.0.0</listen_host>
+    <logger>
+        <level>information</level>
+        <console>true</console>
+    </logger>
+    <asynchronous_insert_log>
+        <database>system</database>
+        <table>asynchronous_insert_log</table>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </asynchronous_insert_log>
+</clickhouse>

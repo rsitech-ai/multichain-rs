@@ -1,0 +1,89 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      COSIGN_PASSWORD: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.97.1
+          components: clippy,rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: 1.72.0
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny,just
+
+      - name: Install Gitleaks
+        run: go install github.com/gitleaks/gitleaks/v8@v8.30.1
+
+      - name: Rust formatting
+        run: cargo fmt --all -- --check
+
+      - name: Rust lint
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Rust tests
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          cargo test --workspace --all-targets 2>&1 | tee artifacts/test-results.txt
+
+      - name: Protobuf compatibility
+        run: |
+          buf lint
+          buf build -o artifacts/platform.binpb
+          buf breaking schemas/protobuf --against tests/contracts/platform-v1-baseline.binpb
+
+      - name: Dependency policy
+        run: |
+          cargo deny check
+          cargo deny list > artifacts/dependency-licenses.txt
+          gitleaks detect --no-banner
+
+      - name: Compose validation
+        run: docker compose -f infra/compose.yaml config --quiet
+
+      - uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: artifacts/sbom.cdx.json
+          upload-artifact: false
+
+      - uses: sigstore/cosign-installer@v3
+
+      - name: Exercise artifact signing with an ephemeral key
+        run: |
+          cosign generate-key-pair
+          cosign sign-blob \
+            --yes \
+            --key cosign.key \
+            --output-signature artifacts/platform.binpb.sig \
+            artifacts/platform.binpb
+          rm cosign.key cosign.pub
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verification-artifacts
+          path: artifacts/
+          if-no-files-found: error

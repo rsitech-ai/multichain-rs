@@ -1,0 +1,7 @@
+/target/
+/.env
+/apps/web/node_modules/
+/apps/web/.next/
+/artifacts/certification/
+*.profraw
+.DS_Store

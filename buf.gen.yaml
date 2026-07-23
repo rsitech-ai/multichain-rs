@@ -1,0 +1,6 @@
+version: v2
+plugins:
+  - local: protoc-gen-prost
+    out: crates/platform-proto/src/generated
+  - local: protoc-gen-tonic
+    out: crates/platform-proto/src/generated
