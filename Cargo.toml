@@ -11,10 +11,21 @@ members = [
 ]
 
 [workspace.package]
+authors = ["RSI Tech <info@rsitech.ai>"]
 edition = "2024"
+homepage = "https://rsitech.ai"
 rust-version = "1.94"
-license = "Apache-2.0 OR MIT"
+license = "Apache-2.0"
+publish = false
+readme = "README.md"
+repository = "https://github.com/rsitech-ai/multichain-rs"
 version = "0.1.0"
+
+[workspace.metadata.multichain]
+copyright-owner = "Rafal Sikora"
+maintainer = "RSI Tech"
+contact = "info@rsitech.ai"
+website = "https://rsitech.ai"
 
 [workspace.dependencies]
 alloy = { version = "=2.2.0", default-features = false }

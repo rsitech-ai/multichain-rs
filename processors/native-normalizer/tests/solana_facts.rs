@@ -41,7 +41,12 @@ fn schema_is_append_only_fork_aware_and_selected_account_bounded() {
     assert!(SOLANA_FACT_SCHEMA.contains("blockhash String"));
     assert!(SOLANA_FACT_SCHEMA.contains("signature String"));
     assert!(SOLANA_FACT_SCHEMA.contains("coverage_tier LowCardinality(String)"));
-    assert!(SOLANA_FACT_SCHEMA.contains("argMax(commitment, revision)"));
+    assert!(SOLANA_FACT_SCHEMA.contains("argMax(commitment, source.revision)"));
+    assert!(!SOLANA_FACT_SCHEMA.contains("max(revision) AS revision"));
+    assert!(SOLANA_FACT_SCHEMA.contains(
+        "ORDER BY (signature, slot, blockhash, outer_index, isNull(inner_index), \
+         ifNull(inner_index, 0), revision)"
+    ));
     assert!(SOLANA_FACT_SCHEMA.contains("solana_account_writes_current"));
     assert!(SOLANA_FACT_SCHEMA.contains("raw_data_hex String"));
     assert!(SOLANA_FACT_SCHEMA.contains("solana_decoder_revisions"));

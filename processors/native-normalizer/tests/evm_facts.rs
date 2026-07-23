@@ -26,7 +26,8 @@ fn evm_schema_is_append_only_chain_qualified_and_decoder_isolated() {
     assert!(!EVM_FACT_SCHEMA.contains("ReplacingMergeTree"));
     assert!(EVM_FACT_SCHEMA.contains("chain_id UInt64"));
     assert!(EVM_FACT_SCHEMA.contains("value UInt256"));
-    assert!(EVM_FACT_SCHEMA.contains("argMax(finality, revision)"));
+    assert!(EVM_FACT_SCHEMA.contains("argMax(finality, source.revision)"));
+    assert!(!EVM_FACT_SCHEMA.contains("max(revision) AS revision"));
     assert!(EVM_FACT_SCHEMA.contains("evm_decoder_revisions"));
     assert!(EVM_FACT_SCHEMA.contains("raw_data_hex"));
 }

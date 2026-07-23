@@ -12,28 +12,38 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    env:
-      COSIGN_PASSWORD: ""
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: 1.97.1
-          components: clippy,rustfmt
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.97.1 --profile minimal --component clippy,rustfmt
+          rustup override set 1.97.1
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Install Linux native build headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libcurl4-openssl-dev
 
-      - uses: bufbuild/buf-setup-action@v1
-        with:
-          version: 1.72.0
+      - name: Install pinned Rust verification tools
+        run: |
+          cargo install --locked --version 0.9.1 --features cli cargo-about
+          cargo install --locked --version 0.20.2 cargo-deny
 
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-deny,just
+      - name: Install checksum-verified Buf
+        run: |
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output /tmp/buf \
+            https://github.com/bufbuild/buf/releases/download/v1.72.0/buf-Linux-x86_64
+          echo "8720830e26a733da55bb89bcd3cb44849c0965fc0c44fb5d691cccdc64dca5af  /tmp/buf" \
+            | sha256sum --check
+          chmod +x /tmp/buf
+          sudo mv /tmp/buf /usr/local/bin/buf
 
       - name: Install Gitleaks
-        run: go install github.com/gitleaks/gitleaks/v8@v8.30.1
+        run: |
+          go install github.com/zricethezav/gitleaks/v8@v8.30.1
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
 
       - name: Rust formatting
         run: cargo fmt --all -- --check
@@ -58,29 +68,28 @@ jobs:
         run: |
           cargo deny check
           cargo deny list > artifacts/dependency-licenses.txt
+          cargo about generate \
+            --workspace \
+            --locked \
+            --fail \
+            --output-file artifacts/third-party-licenses.html \
+            scripts/release/third-party-licenses.hbs
           gitleaks detect --no-banner
 
       - name: Compose validation
         run: docker compose -f infra/compose.yaml config --quiet
 
-      - uses: anchore/sbom-action@v0
-        with:
-          path: .
-          format: cyclonedx-json
-          output-file: artifacts/sbom.cdx.json
-          upload-artifact: false
+      - name: Capture locked dependency inventory
+        run: cargo tree --locked --workspace --all-features > artifacts/dependency-tree.txt
 
-      - uses: sigstore/cosign-installer@v3
-
-      - name: Exercise artifact signing with an ephemeral key
+      - name: Build and smoke release bundle
         run: |
-          cosign generate-key-pair
-          cosign sign-blob \
-            --yes \
-            --key cosign.key \
-            --output-signature artifacts/platform.binpb.sig \
-            artifacts/platform.binpb
-          rm cosign.key cosign.pub
+          ./scripts/release/build-release.sh v0.1.0
+          ./scripts/release/smoke-release.sh \
+            "dist/multichain-rs-v0.1.0-$(rustc -Vv | awk '/^host:/ {print $2}').tar.gz" \
+            "dist/multichain-rs-v0.1.0-$(rustc -Vv | awk '/^host:/ {print $2}').tar.gz.sha256"
+          mkdir -p artifacts/release
+          cp dist/* artifacts/release/
 
       - uses: actions/upload-artifact@v4
         with:
