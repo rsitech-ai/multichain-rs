@@ -22,3 +22,6 @@ infra-health:
 
 infra-down:
     docker compose -f infra/compose.yaml --profile setup down --volumes --remove-orphans
+
+verify-task4:
+    MULTICHAIN_REQUIRE_INFRA=1 cargo test -p integration-tests --test wal_broker_archive -- --nocapture

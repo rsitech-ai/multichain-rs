@@ -5,5 +5,18 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
+[dependencies]
+platform-proto = { path = "../platform-proto", version = "=0.1.0" }
+prost.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+time.workspace = true
+thiserror.workspace = true
+zstd.workspace = true
+
+[dev-dependencies]
+observation-envelope = { path = "../observation-envelope", version = "=0.1.0" }
+
 [lints]
 workspace = true

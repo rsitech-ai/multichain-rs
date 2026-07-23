@@ -5,5 +5,10 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
+[dependencies]
+archive-format = { path = "../archive-format", version = "=0.1.0" }
+platform-proto = { path = "../platform-proto", version = "=0.1.0" }
+thiserror.workspace = true
+
 [lints]
 workspace = true

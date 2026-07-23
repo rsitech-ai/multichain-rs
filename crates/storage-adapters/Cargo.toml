@@ -5,5 +5,16 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
+[dependencies]
+archive-format = { path = "../archive-format", version = "=0.1.0" }
+object_store.workspace = true
+platform-proto = { path = "../platform-proto", version = "=0.1.0" }
+storage-ports = { path = "../storage-ports", version = "=0.1.0" }
+prost.workspace = true
+rdkafka.workspace = true
+sha2.workspace = true
+sqlx.workspace = true
+tokio = { workspace = true, features = ["sync"] }
+
 [lints]
 workspace = true
