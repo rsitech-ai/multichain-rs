@@ -21,6 +21,29 @@ for Bitcoin state. The immutable parser corpus deliberately does not assert
 proof of work and contains synthetic duplicate coinbase identities, so it is
 not misrepresented as a canonical UTXO chain.
 
+## Local client and infrastructure runtime acceptance
+
+Result on 2026-07-23: **passed**.
+
+```text
+just validate-local
+```
+
+The aggregate evidence is
+`artifacts/local-validation/20260723T171946Z/summary.json`. It proves:
+
+- three isolated Bitcoin Core 31.1 observers with live RPC/ZMQ, source-local
+  mempool divergence, reconciliation, and a heavier-branch reorg;
+- a real Reth 2.2.0 dev-chain transaction and restart-safe disposable state;
+- the official BSC 1.7.3 client sealing a generated one-validator Parlia chain
+  and including a funded transaction;
+- an Agave 4.1.2 local validator including a signed, funded transfer; and
+- non-skipped Redpanda, MinIO, ClickHouse, PostgreSQL, REST, WebSocket,
+  restart-replay, and gap-repair tests in a task-scoped Compose project.
+
+See `docs/operations/local-runtime-validation.md` for the exact scope,
+checksums, cleanup contract, and non-claims.
+
 ## Fault and correction coverage
 
 | Failure or correction | Expected behavior | Evidence |
@@ -51,19 +74,18 @@ These fixtures prove protocol and replay compatibility at their documented
 semantic scope. They do not prove continuous source availability, geographic
 independence, production latency, or historical completeness.
 
-## External live-validation matrix
+## Production live-validation matrix
 
-The local capability audit on 2026-07-23 found none of `bitcoind`,
-`bitcoin-cli`, `reth`, `geth`, `bsc`, or `solana-test-validator` on `PATH`, and
-no environment-variable names prefixed with `BITCOIN_`, `BTC_`, `RETH_`,
-`ETH_`, `BSC_`, `SOLANA_`, or `YELLOWSTONE_`.
+Local binaries are downloaded and verified on demand by `just validate-local`;
+they do not need to be preinstalled on `PATH`. No production node credentials,
+Yellowstone tokens, or independently located source deployments are configured.
 
 | Network | Live production gate | Current status |
 | --- | --- | --- |
-| Bitcoin | Three independently located Bitcoin Core observers; ZMQ plus RPC sequence reconciliation; controlled disconnect/reconnect and reorg | `blocked:external` — nodes and RPC/ZMQ credentials are not provisioned |
-| Ethereum | Owned Reth plus consensus client; controlled commit/reorg/revert; secondary head/finality reconciliation | `blocked:external` — execution/consensus nodes are not provisioned |
-| BNB Smart Chain | Official `bnb-chain/bsc` node; native finalized-tag advancement/stall exercise | `blocked:external` — official node is not provisioned |
-| Solana | Two independent Yellowstone providers; reconnect/gap/reconstruction exercise; selected-account comparison | `blocked:external` — endpoints and token environment variables are not provisioned |
+| Bitcoin | Three independently located Bitcoin Core observers; ZMQ plus RPC sequence reconciliation; controlled disconnect/reconnect and reorg | `local-runtime-proven; blocked:external-production` — the three-observer behavior passes locally, but independent regions/providers are not provisioned |
+| Ethereum | Owned Reth plus consensus client; controlled commit/reorg/revert; secondary head/finality reconciliation | `local-runtime-proven; blocked:external-production` — Reth RPC/restart passes locally, but an owned mainnet EL/CL pair and secondary source are not provisioned |
+| BNB Smart Chain | Official `bnb-chain/bsc` node; native finalized-tag advancement/stall exercise | `local-runtime-proven; blocked:external-production` — the official client passes locally, but chain-ID-56 finality is not proven by the one-validator chain |
+| Solana | Two independent Yellowstone providers; reconnect/gap/reconstruction exercise; selected-account comparison | `local-runtime-proven; blocked:external-production` — Agave execution passes locally, but independent Yellowstone endpoints and tokens are not provisioned |
 
 Archive-state Ethereum queries, BSC archive operation, an owned Solana
 validator, and a full Solana account firehose are explicitly outside the
