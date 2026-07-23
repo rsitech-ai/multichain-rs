@@ -7,6 +7,10 @@ license.workspace = true
 
 [dependencies]
 observation-envelope = { path = "../observation-envelope", version = "=0.1.0" }
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
 
 [lints]
 workspace = true

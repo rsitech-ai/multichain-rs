@@ -1,0 +1,15 @@
+{
+  "rbf_signaling": {
+    "sequence": 4294967293,
+    "signals_bip125": true
+  },
+  "cpfp": {
+    "parent": "d7351cab5ee7436733e4b760816c5693ff40290a88ecd087958825cb89da0395",
+    "child": "e7a9b724f04a7d5aee544d70bfc4e2ca6bd2f57c5fb7900e4f47f0ba392fc6ce",
+    "spent_vout": 0
+  },
+  "conflicts": {
+    "members": ["conflict_a", "conflict_b"],
+    "spent_vout": 0
+  }
+}

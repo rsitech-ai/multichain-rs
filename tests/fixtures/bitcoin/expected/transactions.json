@@ -1,0 +1,16 @@
+{
+  "legacy_transaction": {
+    "txid": "38bbcabc57b7ab88149ac7143de3c2da113894729da706cf68bc7cec77ce0d78",
+    "wtxid": "38bbcabc57b7ab88149ac7143de3c2da113894729da706cf68bc7cec77ce0d78",
+    "output_0_sats": "5000",
+    "output_0_script_pubkey_id": "6cdf10b629f2c1b8cab546ef4e4ddd850d40d17a69cc5e2c6fdb17dfda0df353"
+  },
+  "segwit_v0_transaction": {
+    "txid": "9f969fc01aca0a12933f7d80920ed9fa2ccea2742b1bbdc60b6ed26728c4a1ed",
+    "wtxid": "ee49d957a6d4406b3bff33fa79b84fc456b38eb38d7e2588b92c587e1c3230f9"
+  },
+  "taproot_transaction": {
+    "txid": "e4ec5782f3a528ac5fe1f316e41c6bd865090e35ce16f20dad99ad74dbdab453",
+    "wtxid": "802f3fd321bbefc67308d60a34708dc962f1f12dfc09a42091c888dbb29289b0"
+  }
+}

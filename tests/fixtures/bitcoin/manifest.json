@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "checksum_scope": "sha256(decoded_consensus_bytes)",
+  "validation_scope": "consensus_decode_and_merkle_commitment; proof_of_work_not_asserted",
+  "objects": [
+    {
+      "name": "legacy_transaction",
+      "path": "objects/legacy_transaction.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "77f1d0a4ebe2aba5c2251dee4f700b4f10db756098fdcd23fc951a20fbbe3248",
+      "expected": "valid",
+      "expected_txid": "38bbcabc57b7ab88149ac7143de3c2da113894729da706cf68bc7cec77ce0d78",
+      "expected_wtxid": "38bbcabc57b7ab88149ac7143de3c2da113894729da706cf68bc7cec77ce0d78"
+    },
+    {
+      "name": "segwit_v0_transaction",
+      "path": "objects/segwit_v0_transaction.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "a616d88b41c05608797d3f8daf10ca42ca5ecbe1bf777c5d4ec6980807f953bf",
+      "expected": "valid",
+      "expected_txid": "9f969fc01aca0a12933f7d80920ed9fa2ccea2742b1bbdc60b6ed26728c4a1ed",
+      "expected_wtxid": "ee49d957a6d4406b3bff33fa79b84fc456b38eb38d7e2588b92c587e1c3230f9"
+    },
+    {
+      "name": "taproot_transaction",
+      "path": "objects/taproot_transaction.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "662632316d6ce695e5385d643b7860dc89e48e2db7c4393c6bf46dce15c816af",
+      "expected": "valid",
+      "expected_txid": "e4ec5782f3a528ac5fe1f316e41c6bd865090e35ce16f20dad99ad74dbdab453",
+      "expected_wtxid": "802f3fd321bbefc67308d60a34708dc962f1f12dfc09a42091c888dbb29289b0"
+    },
+    {
+      "name": "coinbase_transaction",
+      "path": "objects/coinbase_transaction.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "dfb8b5b813dd826584cd19cce46d6f64395f3d7f26a3e985c279dd4976192f92",
+      "expected": "valid",
+      "expected_txid": "e171bd1212f43336ea013730b2cb758d5a76a20f264d610132caf7b2dcf82b92",
+      "expected_wtxid": "e171bd1212f43336ea013730b2cb758d5a76a20f264d610132caf7b2dcf82b92"
+    },
+    {
+      "name": "large_witness",
+      "path": "objects/large_witness.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "32da31239fdaa4900040221ab291fcec8dd671ad3bc78f1d13a3291990c27596",
+      "expected": "valid",
+      "expected_txid": "b5801d5f3acae5c1559c600b9c408d42d80654740b5a871ec62a66424cc1214f",
+      "expected_wtxid": "80d2d0bffb3166e2aadb00f173eaa7d7404fa4afc5ff506b3dd7bfd6d5f614b5"
+    },
+    {
+      "name": "non_address_script",
+      "path": "objects/non_address_script.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "d77b5a9f4d19c479971ee466eacc42e8d2ffde81f7980eebc8e70a37530b92d7",
+      "expected": "valid"
+    },
+    {
+      "name": "rbf_signaling",
+      "path": "objects/rbf_signaling.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "371c4797231cc2aab56d87c890721c3585556f994e005faef60e745fa1761ba2",
+      "expected": "valid"
+    },
+    {
+      "name": "cpfp_parent",
+      "path": "objects/cpfp_parent.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "8f95ab047740122354a0bccac90bd64b5459dccc354a2de9e020a282f9fe8f3b",
+      "expected": "valid",
+      "expected_txid": "d7351cab5ee7436733e4b760816c5693ff40290a88ecd087958825cb89da0395",
+      "expected_wtxid": "d7351cab5ee7436733e4b760816c5693ff40290a88ecd087958825cb89da0395"
+    },
+    {
+      "name": "cpfp_child",
+      "path": "objects/cpfp_child.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "6dcda799940a4c97e02af412d5b8283257926fd9627e1c642b238327de6ef76f",
+      "expected": "valid",
+      "expected_txid": "e7a9b724f04a7d5aee544d70bfc4e2ca6bd2f57c5fb7900e4f47f0ba392fc6ce",
+      "expected_wtxid": "e7a9b724f04a7d5aee544d70bfc4e2ca6bd2f57c5fb7900e4f47f0ba392fc6ce"
+    },
+    {
+      "name": "conflict_a",
+      "path": "objects/conflict_a.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "bf0e40ee19ef46f8be4bf87ca1ab5813bf7f01d0038eb724520014ee6885b419",
+      "expected": "valid"
+    },
+    {
+      "name": "conflict_b",
+      "path": "objects/conflict_b.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "cf2db2d8438b0032fd08b5c897687a5216b02ec5383921258998abf0acc46920",
+      "expected": "valid"
+    },
+    {
+      "name": "reorg_main_1",
+      "path": "objects/reorg_main_1.hex",
+      "kind": "block",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "fe252fb3bd9ac3ad89628a18230b3ec6d8a99aa6749f64359f989d3e181121fb",
+      "expected": "valid",
+      "expected_block_hash": "c85bb65141c4e6de0b1c0e965b2cd3c3474c35fd5b80c6c8418ad38fd7c3ff53"
+    },
+    {
+      "name": "reorg_main_2",
+      "path": "objects/reorg_main_2.hex",
+      "kind": "block",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "a5d71605997649db2fa306ba0e9b0fdfb80d0b0bd3769fdc09272b1103043f10",
+      "expected": "valid",
+      "expected_block_hash": "5a1fc0d3abf59bd7fd542eac6e87ed5966b2138ac4ffb1224f4fba6afd9fea83"
+    },
+    {
+      "name": "reorg_alt_1",
+      "path": "objects/reorg_alt_1.hex",
+      "kind": "block",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "0c3d497751579d1f3d5175265499d481efba437d64da78611d5e9506c2d59f8a",
+      "expected": "valid",
+      "expected_block_hash": "c81c3f41ded5163d952652d2651410db000b58888fdf8d42d03cf809655107c0"
+    },
+    {
+      "name": "reorg_alt_2",
+      "path": "objects/reorg_alt_2.hex",
+      "kind": "block",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "3c9c06f53d6deeedfee589b366bab0fe977f888648f03f24531806d274fcbf3c",
+      "expected": "valid",
+      "expected_block_hash": "3b1f55adcf8541a7c7605acddba67b795631d8d17575559ae9ae3e21ae865f8d"
+    },
+    {
+      "name": "truncated_transaction",
+      "path": "objects/truncated_transaction.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "ca5cb8feaf1e00d124deb8d60a89ba345780baeca050ca164b665ed81d1dc0b0",
+      "expected": "parse_error"
+    },
+    {
+      "name": "invalid_compact_size",
+      "path": "objects/invalid_compact_size.hex",
+      "kind": "transaction",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "eaa11cccd86d52d3a2a434b16d484cb7623820d169e3005c43107037e3c3296f",
+      "expected": "parse_error"
+    },
+    {
+      "name": "invalid_merkle_block",
+      "path": "objects/invalid_merkle_block.hex",
+      "kind": "block",
+      "source": "generated_regtest",
+      "license": "Apache-2.0 OR MIT",
+      "sha256": "3fa2a887e8f8ea39fb68969adda60c46c849ef220756053cdd22f8493e10b2e3",
+      "expected": "merkle_root_mismatch"
+    }
+  ]
+}

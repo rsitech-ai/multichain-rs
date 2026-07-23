@@ -1,0 +1,28 @@
+[package]
+name = "bitcoin-domain-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+bitcoin-domain = { path = ".." }
+libfuzzer-sys = "=0.4.13"
+
+[[bin]]
+name = "parse_transaction"
+path = "fuzz_targets/parse_transaction.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "parse_block"
+path = "fuzz_targets/parse_block.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
