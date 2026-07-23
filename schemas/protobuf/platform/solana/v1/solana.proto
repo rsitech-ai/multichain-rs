@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package platform.solana.v1;
+
+// ForkId identifies one blockhash-bearing slot fork. Slot alone is not unique.
+message ForkId {
+  uint64 slot = 1;
+  bytes blockhash = 2;
+}
+
+// TransactionKey prevents a signature observed on competing forks from
+// colliding in storage.
+message TransactionKey {
+  bytes signature = 1;
+  ForkId fork = 2;
+}
+
+// Instruction retains opaque program bytes and its outer/CPI location.
+message Instruction {
+  uint32 outer_index = 1;
+  optional uint32 inner_index = 2;
+  uint32 program_id_index = 3;
+  repeated uint32 account_indexes = 4;
+  bytes data = 5;
+}
+
+// AccountWrite is a source observation. Commitment and canonicality are
+// separate revision facts.
+message AccountWrite {
+  ForkId fork = 1;
+  bytes pubkey = 2;
+  bytes owner = 3;
+  string lamports = 4;
+  bytes data = 5;
+  bool executable = 6;
+  uint64 rent_epoch = 7;
+  uint64 write_version = 8;
+}

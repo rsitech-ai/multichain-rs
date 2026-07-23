@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "validation_scope": "public_mainnet_finalized_rpc_semantic_subset_plus_domain_adversarial_vectors",
+  "fixtures": [
+    {
+      "file": "mainnet-v0-transaction.json",
+      "sha256": "c5fdd798d7c8a68725ade200d349ea94f9cd7f63f92b64af638f9216bcd4af77",
+      "slot": 434739559,
+      "blockhash": "ueCxhj6UkQMrfcuCSyN9eKExhCQWp4Fd4wANiyBKMME",
+      "signature": "3QzSaRAdHRC7BzgW8u2QA8K7PPobYd2NgnGprKhPAK11TTnZCxqA9ox6wHsz5tZdFN66bFbaFqvQdKXXj7duwafS"
+    }
+  ]
+}

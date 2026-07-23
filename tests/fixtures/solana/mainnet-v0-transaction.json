@@ -1,0 +1,41 @@
+{
+  "capture_scope": "rpc_semantic_subset",
+  "source_method": "getTransaction",
+  "captured_at": "2026-07-23",
+  "network": "solana-mainnet-beta",
+  "slot": 434739559,
+  "blockhash": "ueCxhj6UkQMrfcuCSyN9eKExhCQWp4Fd4wANiyBKMME",
+  "signature": "3QzSaRAdHRC7BzgW8u2QA8K7PPobYd2NgnGprKhPAK11TTnZCxqA9ox6wHsz5tZdFN66bFbaFqvQdKXXj7duwafS",
+  "version": 0,
+  "recent_blockhash": "9Mka19Fcg6jJreejLwdMbt54DjvZ5jkLwTE3Mb1uPR1H",
+  "account_keys": [
+    "83TSSS7qojPowqrrvH23mCrhEJjnJG2ygaf7FEq9ZgKC",
+    "HLixVmXdBqzP1sXT9au4BHcvUjDgx5ev16cEJdd9tUSM",
+    "ComputeBudget111111111111111111111111111111",
+    "ojh19ojaKduoJZuaJADhcVGp4xt1TcdAvZmpVsCorch"
+  ],
+  "address_table_lookups": [],
+  "instructions": [
+    {"program_id_index": 2, "accounts": [], "data_base58": "Hfdbhh"},
+    {"program_id_index": 2, "accounts": [], "data_base58": "3SAiagS7Y52X"},
+    {"program_id_index": 2, "accounts": [], "data_base58": "UUE8ib"},
+    {"program_id_index": 3, "accounts": [0, 1], "data_base58": "3D5v7HeR7ApjmZ7mn8HN2uuTwb9k3y57pYTDA23fe7LjYbYWXeEXd4U92dyEP7auoGeNp7pmjvwarDe5K"}
+  ],
+  "inner_instructions": [],
+  "logs": [
+    "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+    "Program ComputeBudget111111111111111111111111111111 success",
+    "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+    "Program ComputeBudget111111111111111111111111111111 success",
+    "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+    "Program ComputeBudget111111111111111111111111111111 success",
+    "Program ojh19ojaKduoJZuaJADhcVGp4xt1TcdAvZmpVsCorch invoke [1]",
+    "Program ojh19ojaKduoJZuaJADhcVGp4xt1TcdAvZmpVsCorch consumed 152 of 202 compute units",
+    "Program ojh19ojaKduoJZuaJADhcVGp4xt1TcdAvZmpVsCorch success"
+  ],
+  "pre_balances": ["9703709337", "29635680", "1", "1844441"],
+  "post_balances": ["9703646353", "29635680", "1", "1844441"],
+  "fee": "62984",
+  "compute_units_consumed": 602,
+  "execution_status": "succeeded"
+}
