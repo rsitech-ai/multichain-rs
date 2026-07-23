@@ -46,6 +46,8 @@ tonic = { version = "=0.14.6", default-features = false }
 tempfile = { version = "=3.23.0", default-features = false }
 zstd = { version = "=0.13.3", default-features = false }
 zeromq = { version = "=0.6.0", default-features = false, features = ["tcp-transport", "tokio-runtime"] }
+yellowstone-grpc-client = { version = "=13.2.1", default-features = false }
+yellowstone-grpc-proto = { version = "=12.5.0", default-features = false }
 
 [workspace.lints.rust]
 unsafe_code = "deny"

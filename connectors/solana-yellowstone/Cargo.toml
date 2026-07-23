@@ -1,0 +1,21 @@
+[package]
+name = "solana-yellowstone-connector"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+observation-envelope = { path = "../../crates/observation-envelope", version = "=0.1.0" }
+prost.workspace = true
+reqwest.workspace = true
+solana-domain = { path = "../../crates/solana-domain", version = "=0.1.0" }
+thiserror.workspace = true
+tokio = { workspace = true, features = ["time"] }
+yellowstone-grpc-client.workspace = true
+yellowstone-grpc-proto.workspace = true
+
+[dev-dependencies]
+
+[lints]
+workspace = true
