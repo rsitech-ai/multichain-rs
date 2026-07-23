@@ -26,6 +26,12 @@ jobs:
           rustup toolchain install 1.97.1 --profile minimal
           rustup override set 1.97.1
 
+      - name: Install Linux native build headers
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libcurl4-openssl-dev
+
       - name: Install pinned release tools
         run: cargo install --locked --version 0.9.1 cargo-about
 

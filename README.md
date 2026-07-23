@@ -65,6 +65,8 @@ interfaces in services.
 ## Requirements
 
 - Rust 1.97.1 (pinned by `rust-toolchain.toml`)
+- A C/C++ toolchain and CMake; Linux builds also require libcurl development
+  headers for the bundled librdkafka build
 - Docker with Compose for the durable platform tests
 - `just`, `buf`, `cargo-deny`, and `gitleaks` for the full repository gate
 - At least 6 GiB free for each native local-runtime validation scope
