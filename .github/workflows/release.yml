@@ -21,15 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: 1.97.1
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.97.1 --profile minimal
+          rustup override set 1.97.1
 
-      - uses: Swatinem/rust-cache@v2
-
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-about@0.9.1
+      - name: Install pinned release tools
+        run: cargo install --locked --version 0.9.1 cargo-about
 
       - name: Build release bundle
         run: ./scripts/release/build-release.sh "${GITHUB_REF_NAME}"
