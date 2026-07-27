@@ -43,6 +43,19 @@ This shared envelope does not merge chain adapters or finality semantics. A
 malformed source payload is still durable replay truth: parsing can fail after
 publication without losing the original bytes.
 
+The live HTTP source runtime polls:
+
+- Reth `eth_chainId` plus `eth_getBlockByNumber` for `latest`, `safe`, and
+  `finalized`;
+- Beacon API block resources for `head` and `finalized`; and
+- official BSC `web3_clientVersion`, `eth_chainId`, `eth_health`, plus
+  `eth_getBlockByNumber` for `latest`, `safe`, and `finalized`.
+
+Each successful or non-success HTTP response body is captured before status
+interpretation. Retryable network/status failures create an explicit
+incomplete interval. Response bodies are read incrementally under a configured
+hard limit, including chunked responses.
+
 ## Native Tables
 
 `evm_blocks`, `evm_transactions`, `evm_receipts`, and `evm_logs` use ordinary

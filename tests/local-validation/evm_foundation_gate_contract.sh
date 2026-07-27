@@ -14,9 +14,12 @@ jq -e '
     "rust_format",
     "evm_clippy",
     "source_capture",
+    "source_runtime",
+    "connector_live_plans",
     "ethereum_recorded",
     "bsc_recorded",
-    "evm_raw_first"
+    "evm_raw_first",
+    "evm_live_polling"
   ] and
   .promotion_verdict == "hold" and
   .production_blockers == [

@@ -12,6 +12,7 @@ evm-domain = { path = "../../crates/evm-domain", version = "=0.1.0" }
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
+source-runtime = { path = "../../crates/source-runtime", version = "=0.1.0" }
 thiserror.workspace = true
 
 [lints]
