@@ -91,6 +91,49 @@ fn exact_payloads_commit_in_one_session_local_total_order() {
 }
 
 #[test]
+fn reopened_wal_resumes_without_sequence_reuse() {
+    let directory = tempdir().expect("temporary directory");
+    let path = directory.path().join("resumed-source.wal");
+    let session_id = [0x35; 16];
+    let initial_session = CaptureSession::with_id(session_id);
+    let config = WalConfig::new(initial_session.id(), 1024 * 1024, Duration::from_millis(1));
+    let (wal, _) = FileWal::open(&path, config.clone(), Arc::new(FixedClock)).expect("initial WAL");
+    let mut initial = DurableSourceCapture::new(
+        SourceIdentity::new("reth-eu-1", "ethereum", "mainnet").expect("identity"),
+        initial_session,
+        Arc::new(FixedClock),
+        wal,
+        4096,
+    )
+    .expect("initial capture");
+    initial
+        .capture(RawSourceMessage::new("reth_exex", "chain_committed", b"first").expect("message"))
+        .expect("first commit");
+    drop(initial);
+
+    let (wal, recovery) = FileWal::open(&path, config, Arc::new(FixedClock)).expect("reopened WAL");
+    assert!(recovery.incidents.is_empty());
+    let resumed_session = CaptureSession::resume(session_id, wal.next_sequence());
+    let mut resumed = DurableSourceCapture::new(
+        SourceIdentity::new("reth-eu-1", "ethereum", "mainnet").expect("identity"),
+        resumed_session,
+        Arc::new(FixedClock),
+        wal,
+        4096,
+    )
+    .expect("resumed capture");
+    let second = resumed
+        .capture(RawSourceMessage::new("reth_exex", "chain_committed", b"second").expect("message"))
+        .expect("second commit")
+        .observation
+        .expect("second observation");
+
+    assert_eq!(second.collector_sequence, 1);
+    let (_, wal) = resumed.into_parts();
+    assert_eq!(wal.committed().expect("committed scan").count(), 2);
+}
+
+#[test]
 fn invalid_identity_message_and_payload_bounds_fail_before_wal_writes() {
     assert!(matches!(
         SourceIdentity::new("", "ethereum", "mainnet"),

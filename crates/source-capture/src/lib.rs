@@ -89,6 +89,21 @@ impl CaptureSession {
         }
     }
 
+    /// Restores a source session at the next sequence proven by WAL recovery.
+    ///
+    /// The caller must use the exact session ID supplied to the recovered WAL.
+    ///
+    /// # Panics
+    ///
+    /// The fixed array always satisfies the 16-byte session contract.
+    #[must_use]
+    pub fn resume(id: [u8; 16], next_sequence: u64) -> Self {
+        Self {
+            id: SourceSessionId::try_from(id.as_slice()).expect("fixed source session ID"),
+            next_sequence,
+        }
+    }
+
     /// Creates a fresh session from operating-system entropy.
     ///
     /// # Errors

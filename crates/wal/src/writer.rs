@@ -142,6 +142,13 @@ impl FileWal {
         self.logical_end
     }
 
+    /// Returns the next collector sequence proven by WAL recovery and pending
+    /// appends.
+    #[must_use]
+    pub const fn next_sequence(&self) -> u64 {
+        self.next_sequence
+    }
+
     /// Writes and durably flushes a terminal digest over every preceding frame.
     ///
     /// # Errors
