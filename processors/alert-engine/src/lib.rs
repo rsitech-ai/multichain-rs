@@ -3,11 +3,16 @@
 use std::fmt::Write as _;
 
 mod mempool;
+mod persistence;
 
 pub use api_contract::Completeness;
 pub use mempool::{
     AlertTransition, DegradedPolicy, MempoolAlertError, MempoolAlertEvaluation,
     MempoolAlertEvaluator, QuorumFeeBandSnapshot, QuorumVbytesAboveDefinition, SnapshotCause,
+};
+pub use persistence::{
+    AlertAuditSummary, AlertDeliveryError, AlertDeliverySink, AlertPersistenceError,
+    DeliveryReport, MemoryAlertDeliverySink, OutboxDelivery, PersistOutcome, PostgresAlertStore,
 };
 use serde::Serialize;
 use thiserror::Error;

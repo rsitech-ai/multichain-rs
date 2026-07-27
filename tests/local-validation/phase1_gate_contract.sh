@@ -16,7 +16,8 @@ jq -e '
     "bitcoin_clippy",
     "bitcoin_unit_tests",
     "bitcoin_multi_observer_fixture",
-    "alert_preview_http"
+    "alert_preview_http",
+    "alert_postgres_transaction"
   ] and
   .promotion_verdict == "hold" and
   .production_blockers == [

@@ -75,6 +75,14 @@
         "tests/e2e/phase0_synthetic.rs",
         "tests/fault/phase0_restart_replay.rs"
       ]
+    },
+    {
+      "claim": "Evaluates source-qualified Bitcoin mempool alerts with correction-aware state and a transactional PostgreSQL outbox.",
+      "evidence": [
+        "docs/data-catalog/alerts-bitcoin-v1.md",
+        "processors/alert-engine/src/persistence.rs",
+        "processors/alert-engine/tests/postgres_alert_outbox.rs"
+      ]
     }
   ],
   "limitations": [

@@ -54,8 +54,21 @@ never retracts an active alert because absence is not proven.
 
 Evaluation IDs hash the normalized definition/evidence transition. Trigger,
 correction, and retraction deliveries receive separate deterministic outbox
-idempotency keys. Durable PostgreSQL definitions and transactional outbox
-delivery are not implemented in this preview slice.
+idempotency keys.
+
+### Durable state and delivery
+
+PostgreSQL retains immutable definition versions, input fact IDs, source-health
+evidence, exact evaluation results, monotonic current state, and delivery
+outbox rows. The evaluation, state advance, and required outbox row commit in
+one transaction. Exact current or historical replay is idempotent; altered
+evidence for an existing revision fails closed.
+
+The outbox is at-least-once. A sink must deduplicate by
+`idempotency_key` because a crash can occur after sink acknowledgement but
+before the row is marked `delivered`. Failed deliveries remain `pending` with
+attempt count and bounded error evidence. The included memory sink is a
+deterministic test adapter, not a production notification channel.
 
 ### HTTP preview
 
@@ -67,6 +80,6 @@ mutation and returns:
 {"error":"invalid_alert_preview"}
 ```
 
-with HTTP 400 for malformed or inconsistent input. Persistent alert creation,
-pause, notification delivery, and organization authorization remain deferred
-until their control-plane contracts are implemented.
+with HTTP 400 for malformed or inconsistent input. Public alert creation,
+pause, production notification adapters, and organization authorization remain
+deferred until their authenticated control-plane contracts are implemented.
