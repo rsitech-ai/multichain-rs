@@ -37,6 +37,7 @@ proves:
 - declared load, soak, and disaster-recovery targets.
 
 The current slice is a durable capture boundary and recorded-source proof. It
-does not yet provide long-running Reth, beacon, or BSC network loops, restored
-session sequencing after process recovery, connector health telemetry, or
-production node configuration.
+does not yet provide long-running Reth, beacon, or BSC network loops,
+connector health telemetry, or production node configuration. WAL reopen
+does expose the proven next collector sequence, and the capture session has a
+tested resume path that prevents sequence reuse.
