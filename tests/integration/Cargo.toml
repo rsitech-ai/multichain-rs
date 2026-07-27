@@ -33,6 +33,7 @@ serde_json.workspace = true
 sha2.workspace = true
 solana-canonicality = { path = "../../processors/solana-canonicality", version = "=0.1.0" }
 solana-domain = { path = "../../crates/solana-domain", version = "=0.1.0" }
+source-capture = { path = "../../crates/source-capture", version = "=0.1.0" }
 storage-adapters = { path = "../../crates/storage-adapters", version = "=0.1.0" }
 storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }
 tempfile.workspace = true

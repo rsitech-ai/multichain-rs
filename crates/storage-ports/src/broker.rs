@@ -5,6 +5,10 @@ use thiserror::Error;
 
 /// Versioned raw Bitcoin observation topic.
 pub const RAW_BITCOIN_OBSERVATION_TOPIC: &str = "dev.raw.bitcoin.mainnet.source.observation.v1";
+/// Versioned raw Ethereum execution/consensus observation topic.
+pub const RAW_ETHEREUM_OBSERVATION_TOPIC: &str = "dev.raw.ethereum.mainnet.source.observation.v1";
+/// Versioned raw BNB Smart Chain observation topic.
+pub const RAW_BSC_OBSERVATION_TOPIC: &str = "dev.raw.bsc.mainnet.source.observation.v1";
 
 /// Durable broker acknowledgement for one contiguous source range.
 #[derive(Clone, Debug, Eq, PartialEq)]
