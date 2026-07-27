@@ -8,9 +8,12 @@ readonly LOCAL_CHECKS=(
   rust_format
   evm_clippy
   source_capture
+  source_runtime
+  connector_live_plans
   ethereum_recorded
   bsc_recorded
   evm_raw_first
+  evm_live_polling
 )
 readonly PRODUCTION_BLOCKERS=(
   owned_reth_consensus_pair
@@ -134,6 +137,7 @@ run_check rust_format cargo fmt --all -- --check
 run_check evm_clippy \
   cargo clippy \
   -p source-capture \
+  -p source-runtime \
   -p storage-ports \
   -p ethereum-reth-connector \
   -p ethereum-consensus-connector \
@@ -142,12 +146,20 @@ run_check evm_clippy \
   -p integration-tests \
   --all-targets --all-features -- -D warnings
 run_check source_capture cargo test -p source-capture
+run_check source_runtime cargo test -p source-runtime
+run_check connector_live_plans \
+  cargo test \
+  -p ethereum-reth-connector --test live_plan \
+  -p ethereum-consensus-connector --test live_plan \
+  -p bsc-connector --test live_plan
 run_check ethereum_recorded \
   cargo test -p integration-tests --test ethereum_recorded
 run_check bsc_recorded \
   cargo test -p integration-tests --test bsc_recorded
 run_check evm_raw_first \
   cargo test -p integration-tests --test evm_raw_first
+run_check evm_live_polling \
+  cargo test -p integration-tests --test evm_live_polling
 
 working_tree_dirty=false
 if [[ -n "$(git status --short)" ]]; then

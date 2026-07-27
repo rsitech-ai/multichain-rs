@@ -488,6 +488,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.11.0",
+ "source-runtime",
  "thiserror 2.0.19",
 ]
 
@@ -926,6 +927,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.11.0",
+ "source-runtime",
  "thiserror 2.0.19",
 ]
 
@@ -938,6 +940,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.11.0",
+ "source-runtime",
  "thiserror 2.0.19",
 ]
 
@@ -1671,6 +1674,7 @@ dependencies = [
  "solana-canonicality",
  "solana-domain",
  "source-capture",
+ "source-runtime",
  "storage-adapters",
  "storage-ports",
  "tempfile",
@@ -3187,6 +3191,25 @@ dependencies = [
  "platform-proto",
  "tempfile",
  "thiserror 2.0.19",
+ "wal",
+]
+
+[[package]]
+name = "source-runtime"
+version = "0.1.0"
+dependencies = [
+ "observation-envelope",
+ "platform-proto",
+ "prost",
+ "reqwest",
+ "serde_json",
+ "source-capture",
+ "storage-adapters",
+ "storage-ports",
+ "tempfile",
+ "thiserror 2.0.19",
+ "tokio",
+ "tokio-util",
  "wal",
 ]
 

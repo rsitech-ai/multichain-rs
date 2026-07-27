@@ -83,10 +83,11 @@ held**.
 just verify-evm-foundation
 ```
 
-The gate proves that recorded Reth, Ethereum consensus, and official BSC
-source payloads cross the shared WAL durability boundary before parsing.
-Ethereum and BSC publish to separate versioned raw topics, broker replay is
-idempotent, exact malformed payloads remain recoverable, and ambiguous or
+The gate proves that recorded and loopback-live Reth, Ethereum consensus, and
+official BSC source payloads cross the shared WAL durability boundary before
+parsing. Ethereum and BSC publish to separate versioned raw topics, broker
+replay is idempotent, bounded response reads fail closed, transient gaps are
+explicit, exact malformed payloads remain recoverable, and ambiguous or
 inconsistent WAL commit outcomes poison the source session.
 
 The evidence is written under

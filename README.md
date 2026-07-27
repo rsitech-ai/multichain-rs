@@ -26,9 +26,9 @@ replay later corrections.
 | Network | Repository scope |
 | --- | --- |
 | Bitcoin | Bitcoin Core ZMQ/RPC capture, crash-safe WAL, observer-local mempools, gap recovery, block DAG, UTXO apply/revert, RBF and CPFP relationships, source-qualified facts and APIs |
-| Ethereum | Chain-ID-safe domain, WAL-first exact Reth/consensus source capture, execution-payload joins, reorg revisions, safe/finalized ancestry, decoder and fact isolation |
+| Ethereum | Chain-ID-safe domain, bounded Reth/Beacon HTTP polling, WAL-first exact source capture, explicit gaps, execution-payload joins, reorg revisions, safe/finalized ancestry, decoder and fact isolation |
 | Solana | Fork-qualified transaction identity, Yellowstone protobuf capture, dual-provider gap/divergence semantics, reversible selected-account projections, decoder revisions |
-| BNB Smart Chain | Official-client semantics, independently routed WAL-first source capture, chain-ID isolation, head/finalized tracking, fast-finality stall and regression handling |
+| BNB Smart Chain | Official-client probes, bounded JSON-RPC polling, independently routed WAL-first source capture, chain-ID isolation, head/safe/finalized tracking, fast-finality stall and regression handling |
 | Platform | Framed WAL and archive format, Redpanda/Kafka adapters, ClickHouse facts, PostgreSQL checkpoints, S3-compatible archive path, REST and WebSocket serving |
 
 Local validation uses disposable, loopback-only runtimes. The passing gate
@@ -103,9 +103,10 @@ just verify-evm-foundation
 ```
 
 This gate needs no mainnet credentials. It proves the shared durable capture
-boundary and separate chain routing, then returns `promotion_verdict=hold`
-until owned mainnet sources and operational fault evidence exist. See the
-[EVM foundation local gate](docs/operations/evm-foundation-local-gate.md).
+boundary, bounded live HTTP polling, explicit transient-gap handling, and
+separate chain routing, then returns `promotion_verdict=hold` until owned
+mainnet sources and operational fault evidence exist. See the [EVM foundation
+local gate](docs/operations/evm-foundation-local-gate.md).
 
 Start the local durable services and run the synthetic end-to-end path:
 

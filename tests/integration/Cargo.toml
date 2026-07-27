@@ -34,11 +34,12 @@ sha2.workspace = true
 solana-canonicality = { path = "../../processors/solana-canonicality", version = "=0.1.0" }
 solana-domain = { path = "../../crates/solana-domain", version = "=0.1.0" }
 source-capture = { path = "../../crates/source-capture", version = "=0.1.0" }
+source-runtime = { path = "../../crates/source-runtime", version = "=0.1.0" }
 storage-adapters = { path = "../../crates/storage-adapters", version = "=0.1.0" }
 storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }
 tempfile.workspace = true
 test-fixtures = { path = "../../crates/test-fixtures", version = "=0.1.0" }
-tokio = { workspace = true, features = ["macros", "net", "rt-multi-thread", "time"] }
+tokio = { workspace = true, features = ["io-util", "macros", "net", "rt-multi-thread", "time"] }
 tokio-util.workspace = true
 wal = { path = "../../crates/wal", version = "=0.1.0" }
 

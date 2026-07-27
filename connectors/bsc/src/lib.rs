@@ -6,6 +6,7 @@ use evm_canonicality::ExecutionBlock;
 use evm_domain::B256;
 use serde::Deserialize;
 use sha2::{Digest as _, Sha256};
+use source_runtime::{HttpRequestSpec, SourceLoopError};
 use thiserror::Error;
 
 /// Client family configured behind the BSC connector.
@@ -65,6 +66,69 @@ impl BscNodeConfig {
     #[must_use]
     pub fn endpoint(&self) -> &str {
         &self.endpoint
+    }
+
+    /// Builds the official-node JSON-RPC polling cycle for client identity,
+    /// chain identity, health, head, safe, and BSC-native finalized state.
+    ///
+    /// # Errors
+    ///
+    /// Rejects WebSocket-only endpoints because transport changes must remain
+    /// explicit.
+    pub fn http_poll_plan(&self) -> Result<Vec<HttpRequestSpec>, BscConnectorError> {
+        let endpoint = self.endpoint.as_str();
+        let empty = || serde_json::json!([]);
+        let block_params = |tag: &str| serde_json::json!([tag, false]);
+        Ok(vec![
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "web3_clientVersion",
+                "web3_clientVersion",
+                &empty(),
+                1,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_chainId",
+                "eth_chainId",
+                &empty(),
+                2,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_health",
+                "eth_health",
+                &empty(),
+                3,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_getBlockByNumber.latest",
+                "eth_getBlockByNumber",
+                &block_params("latest"),
+                4,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_getBlockByNumber.safe",
+                "eth_getBlockByNumber",
+                &block_params("safe"),
+                5,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_getBlockByNumber.finalized",
+                "eth_getBlockByNumber",
+                &block_params("finalized"),
+                6,
+            )?,
+        ])
     }
 }
 
@@ -220,6 +284,9 @@ pub enum BscConnectorError {
     /// Observation time was invalid.
     #[error("BSC observation time must be positive")]
     InvalidObservationTime,
+    /// HTTP polling configuration was invalid.
+    #[error("invalid BSC HTTP polling plan: {0}")]
+    HttpPlan(#[from] SourceLoopError),
 }
 
 fn parse_block(raw: RawBlock) -> Result<ExecutionBlock, BscConnectorError> {

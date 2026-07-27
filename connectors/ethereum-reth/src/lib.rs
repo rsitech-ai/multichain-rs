@@ -6,6 +6,7 @@ use evm_canonicality::ExecutionBlock;
 use evm_domain::B256;
 use serde::Deserialize;
 use sha2::{Digest as _, Sha256};
+use source_runtime::{HttpRequestSpec, SourceLoopError};
 use thiserror::Error;
 
 /// Validated Ethereum execution source configuration.
@@ -52,6 +53,52 @@ impl RethSourceConfig {
     #[must_use]
     pub fn endpoint(&self) -> &str {
         &self.endpoint
+    }
+
+    /// Builds the raw-first JSON-RPC polling cycle for chain identity and
+    /// execution canonicality states.
+    ///
+    /// # Errors
+    ///
+    /// Rejects WebSocket-only endpoints because transport changes must remain
+    /// explicit.
+    pub fn http_poll_plan(&self) -> Result<Vec<HttpRequestSpec>, RethConnectorError> {
+        let endpoint = self.endpoint.as_str();
+        let block_params = |tag: &str| serde_json::json!([tag, false]);
+        Ok(vec![
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_chainId",
+                "eth_chainId",
+                &serde_json::json!([]),
+                1,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_getBlockByNumber.latest",
+                "eth_getBlockByNumber",
+                &block_params("latest"),
+                2,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_getBlockByNumber.safe",
+                "eth_getBlockByNumber",
+                &block_params("safe"),
+                3,
+            )?,
+            HttpRequestSpec::json_rpc(
+                endpoint,
+                "json_rpc",
+                "eth_getBlockByNumber.finalized",
+                "eth_getBlockByNumber",
+                &block_params("finalized"),
+                4,
+            )?,
+        ])
     }
 }
 
@@ -211,6 +258,9 @@ pub enum RethConnectorError {
     /// Transition had no blocks.
     #[error("Reth transition sides must not be empty")]
     EmptyTransition,
+    /// HTTP polling configuration was invalid.
+    #[error("invalid Reth HTTP polling plan: {0}")]
+    HttpPlan(#[from] SourceLoopError),
 }
 
 fn parse_blocks(raw: Vec<RawBlock>) -> Result<Vec<ExecutionBlock>, RethConnectorError> {
