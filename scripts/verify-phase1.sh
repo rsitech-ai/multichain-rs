@@ -12,6 +12,7 @@ readonly LOCAL_CHECKS=(
   bitcoin_unit_tests
   bitcoin_multi_observer_fixture
   alert_preview_http
+  alert_postgres_transaction
 )
 readonly PRODUCTION_BLOCKERS=(
   three_independent_mainnet_observers
@@ -156,6 +157,9 @@ run_check bitcoin_multi_observer_fixture \
   cargo test -p integration-tests --test bitcoin_multi_observer_mempool
 run_check alert_preview_http \
   cargo test -p query-api --test alert_preview_http
+run_check alert_postgres_transaction \
+  env MULTICHAIN_REQUIRE_INFRA=1 \
+  cargo test -p alert-engine --test postgres_alert_outbox
 
 working_tree_dirty=false
 if [[ -n "$(git status --short)" ]]; then

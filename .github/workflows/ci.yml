@@ -12,6 +12,20 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.3-alpine
+        env:
+          POSTGRES_DB: multichain
+          POSTGRES_USER: multichain
+          POSTGRES_PASSWORD: local-development-only
+        ports:
+          - 15432:5432
+        options: >-
+          --health-cmd "pg_isready -U multichain -d multichain"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 24
     steps:
       - uses: actions/checkout@v7
 
@@ -57,6 +71,11 @@ jobs:
           set -o pipefail
           mkdir -p artifacts
           cargo test --workspace --all-targets 2>&1 | tee artifacts/test-results.txt
+
+      - name: PostgreSQL alert transaction
+        env:
+          MULTICHAIN_REQUIRE_INFRA: "1"
+        run: cargo test -p alert-engine --test postgres_alert_outbox -- --nocapture
 
       - name: Protobuf compatibility
         run: |

@@ -83,14 +83,18 @@ just check
 ```
 
 Run the locally owned Bitcoin Phase 1 checks and produce an explicit
-pass-versus-production-HOLD record:
+pass-versus-production-HOLD record. The gate requires PostgreSQL; start the
+local services first:
 
 ```bash
+just infra-up
 just verify-phase1
+just infra-down
 ```
 
 See the [Phase 1 local gate](docs/operations/phase1-local-gate.md) for the
-evidence boundary.
+evidence boundary and the `MULTICHAIN_TEST_DATABASE_URL` override for an
+existing PostgreSQL instance.
 
 Start the local durable services and run the synthetic end-to-end path:
 
