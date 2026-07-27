@@ -1,6 +1,7 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 check:
+    python3 scripts/validate-project-manifest.py .rsitech/project.json --repo-root .
     cargo fmt --all -- --check
     cargo clippy --workspace --all-targets --all-features -- -D warnings
     cargo test --workspace --all-targets
@@ -9,6 +10,9 @@ check:
     cargo deny check
     gitleaks detect --no-banner
     docker compose -f infra/compose.yaml config --quiet
+    bash tests/local-validation/runner_contract.sh
+    bash tests/local-validation/project_manifest_contract.sh
+    bash tests/local-validation/phase1_gate_contract.sh
 
 infra-up:
     docker compose -f infra/compose.yaml up -d --wait
@@ -40,3 +44,6 @@ verify-phase0:
     MULTICHAIN_REQUIRE_INFRA=1 cargo test -p fault-tests --test phase0_restart_replay -- --nocapture
     # The e2e test creates the durable rows needed by the standalone readiness route.
     log_file="$(mktemp)"; QUERY_API_BIND=127.0.0.1:18080 cargo run -p query-api >"$log_file" 2>&1 & api_pid=$!; trap 'kill "$api_pid" 2>/dev/null || true; rm -f "$log_file"' EXIT; ready=0; for _ in $(seq 1 30); do response="$(curl --fail --silent --show-error http://127.0.0.1:18080/health/ready 2>/dev/null || true)"; if [[ "$response" == *'"component":"query-api"'* && "$response" == *'"ready":true'* ]]; then ready=1; break; fi; sleep 1; done; test "$ready" -eq 1 || { cat "$log_file"; exit 1; }; echo "$response"; kill "$api_pid"; wait "$api_pid" 2>/dev/null || true; trap - EXIT; rm -f "$log_file"
+
+verify-phase1:
+    ./scripts/verify-phase1.sh

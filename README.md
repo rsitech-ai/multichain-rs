@@ -82,6 +82,16 @@ Run the repository-only verification:
 just check
 ```
 
+Run the locally owned Bitcoin Phase 1 checks and produce an explicit
+pass-versus-production-HOLD record:
+
+```bash
+just verify-phase1
+```
+
+See the [Phase 1 local gate](docs/operations/phase1-local-gate.md) for the
+evidence boundary.
+
 Start the local durable services and run the synthetic end-to-end path:
 
 ```bash
@@ -156,7 +166,9 @@ Do not report vulnerabilities in a public issue. Follow
 
 General project questions may use GitHub issues or
 [info@rsitech.ai](mailto:info@rsitech.ai). Contribution expectations are in
-[CONTRIBUTING.md](CONTRIBUTING.md).
+[CONTRIBUTING.md](CONTRIBUTING.md). Support boundaries are in
+[SUPPORT.md](SUPPORT.md), and community participation follows the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 

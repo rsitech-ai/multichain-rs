@@ -2,7 +2,13 @@
 
 use std::fmt::Write as _;
 
+mod mempool;
+
 pub use api_contract::Completeness;
+pub use mempool::{
+    AlertTransition, DegradedPolicy, MempoolAlertError, MempoolAlertEvaluation,
+    MempoolAlertEvaluator, QuorumFeeBandSnapshot, QuorumVbytesAboveDefinition, SnapshotCause,
+};
 use serde::Serialize;
 use thiserror::Error;
 
