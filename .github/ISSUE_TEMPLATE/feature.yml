@@ -1,0 +1,41 @@
+name: Feature proposal
+description: Propose a focused capability or contract change.
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User or operator outcome
+      description: Describe the concrete workflow or failure mode this changes.
+    validations:
+      required: true
+  - type: dropdown
+    id: boundary
+    attributes:
+      label: Primary boundary
+      options:
+        - Chain-native domain
+        - Source connector
+        - Durable storage or replay
+        - Canonicality or correction processor
+        - Query or streaming API
+        - Web or Apple client
+        - Operations, security, or reliability
+    validations:
+      required: true
+  - type: textarea
+    id: source_truth
+    attributes:
+      label: Source identity and correction semantics
+      description: Explain how exact observations, gaps, revisions, and rollback remain explicit.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance evidence
+      description: List focused tests, fault cases, runtime proof, and external gates.
+    validations:
+      required: true
