@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "slug": "multichain-rs",
+    "name": "Multichain",
+    "repository": "rsitech-ai/multichain-rs"
+  },
+  "positioning": {
+    "oneLine": "Source-qualified blockchain observation and replay infrastructure in Rust.",
+    "description": "Captures exact Bitcoin, Ethereum, Solana, and BNB Smart Chain source observations before interpretation, then replays them into chain-native facts and revision-aware serving contracts.",
+    "category": "Blockchain data infrastructure"
+  },
+  "lifecycle": {
+    "stage": "public-preview",
+    "version": "0.1.0"
+  },
+  "platforms": [
+    "Linux",
+    "macOS"
+  ],
+  "languages": [
+    "Protocol Buffers",
+    "Rust",
+    "Shell",
+    "SQL"
+  ],
+  "links": {
+    "repository": "https://github.com/rsitech-ai/multichain-rs",
+    "documentation": "https://github.com/rsitech-ai/multichain-rs/tree/main/docs",
+    "release": "https://github.com/rsitech-ai/multichain-rs/releases/tag/v0.1.0",
+    "download": "https://github.com/rsitech-ai/multichain-rs/releases/tag/v0.1.0",
+    "appStore": null
+  },
+  "media": {
+    "cardImage": "docs/assets/project-card.svg",
+    "screenshots": []
+  },
+  "openSource": {
+    "license": "Apache-2.0",
+    "readme": "README.md",
+    "contributing": "CONTRIBUTING.md",
+    "security": "SECURITY.md",
+    "support": "SUPPORT.md",
+    "codeOfConduct": "CODE_OF_CONDUCT.md"
+  },
+  "capabilities": [
+    {
+      "claim": "Preserves exact source identity and observation order through a crash-safe local WAL.",
+      "evidence": [
+        "crates/observation-envelope/src/lib.rs",
+        "crates/wal/src/lib.rs",
+        "docs/architecture-decisions/0001-observation-order-and-durability.md"
+      ]
+    },
+    {
+      "claim": "Models Bitcoin block, UTXO, observer-local mempool, replacement, and package relationships.",
+      "evidence": [
+        "crates/bitcoin-domain/src/lib.rs",
+        "processors/bitcoin-canonicality/src/lib.rs",
+        "processors/bitcoin-mempool/src/lib.rs"
+      ]
+    },
+    {
+      "claim": "Provides deterministic local validation evidence for Bitcoin, Ethereum, Solana, and BNB Smart Chain semantics.",
+      "evidence": [
+        "docs/operations/four-chain-acceptance.md",
+        "docs/operations/local-runtime-validation.md",
+        "scripts/validate-local.sh"
+      ]
+    },
+    {
+      "claim": "Ships a replayable synthetic durable path through Kafka-compatible streaming, raw object archive, ClickHouse, PostgreSQL, REST, and WebSocket boundaries.",
+      "evidence": [
+        "docs/operations/phase0-evidence.md",
+        "tests/e2e/phase0_synthetic.rs",
+        "tests/fault/phase0_restart_replay.rs"
+      ]
+    }
+  ],
+  "limitations": [
+    "Developer preview: not a hosted service or a production mainnet deployment.",
+    "Three-region observer availability, production high availability, load, soak, and disaster-recovery gates are not yet certified.",
+    "The release bundle contains the proven Phase 0 executables; several Phase 1 processors remain under implementation.",
+    "No web or native Apple analytical client is included in version 0.1.0."
+  ],
+  "safetyBoundaries": [
+    "Does not hold private keys, sign transactions, provide custody, or execute trades.",
+    "Raw observations remain source-qualified; aggregate views are not presented as an authoritative global mempool.",
+    "Local validation uses disposable loopback-only infrastructure and does not prove production security or availability."
+  ]
+}

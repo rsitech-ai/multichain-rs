@@ -2312,6 +2312,7 @@ dependencies = [
 name = "query-api"
 version = "0.1.0"
 dependencies = [
+ "alert-engine",
  "async-trait",
  "axum",
  "bitcoin-canonicality",
@@ -2321,10 +2322,12 @@ dependencies = [
  "native-normalizer",
  "reqwest",
  "serde",
+ "serde_json",
  "sqlx",
  "storage-adapters",
  "storage-ports",
  "tokio",
+ "tower",
 ]
 
 [[package]]
