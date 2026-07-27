@@ -14,6 +14,48 @@ shapes keyed by EIP-155 `chain_id`. They do not share a finality adapter.
 - Exact raw source payloads remain in the observation archive; native fact rows
   identify source, session, observation, parser version, and record time.
 
+## Raw Source Boundary
+
+Ethereum execution, Ethereum consensus, and BSC messages enter the shared
+`source-capture` boundary as exact bytes plus bounded source metadata. The
+boundary assigns a session-local collector sequence, appends to the WAL,
+performs the durability barrier, and only then returns a publishable
+`CommittedObservation`.
+
+Any append or commit failure poisons that capture session until explicit WAL
+recovery. A returned durability range must cover exactly the appended
+collector sequence; a mismatch also poisons the session. Validation failures
+do not consume a sequence.
+
+Ethereum execution and consensus observations share:
+
+```text
+dev.raw.ethereum.mainnet.source.observation.v1
+```
+
+BSC observations use:
+
+```text
+dev.raw.bsc.mainnet.source.observation.v1
+```
+
+This shared envelope does not merge chain adapters or finality semantics. A
+malformed source payload is still durable replay truth: parsing can fail after
+publication without losing the original bytes.
+
+The live HTTP source runtime polls:
+
+- Reth `eth_chainId` plus `eth_getBlockByNumber` for `latest`, `safe`, and
+  `finalized`;
+- Beacon API block resources for `head` and `finalized`; and
+- official BSC `web3_clientVersion`, `eth_chainId`, `eth_health`, plus
+  `eth_getBlockByNumber` for `latest`, `safe`, and `finalized`.
+
+Each successful or non-success HTTP response body is captured before status
+interpretation. Retryable network/status failures create an explicit
+incomplete interval. Response bodies are read incrementally under a configured
+hard limit, including chunked responses.
+
 ## Native Tables
 
 `evm_blocks`, `evm_transactions`, `evm_receipts`, and `evm_logs` use ordinary

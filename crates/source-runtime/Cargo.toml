@@ -1,0 +1,28 @@
+[package]
+name = "source-runtime"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+observation-envelope = { path = "../observation-envelope", version = "=0.1.0" }
+reqwest.workspace = true
+serde_json.workspace = true
+source-capture = { path = "../source-capture", version = "=0.1.0" }
+storage-ports = { path = "../storage-ports", version = "=0.1.0" }
+thiserror.workspace = true
+tokio = { workspace = true, features = ["macros", "time"] }
+tokio-util.workspace = true
+wal = { path = "../wal", version = "=0.1.0" }
+
+[dev-dependencies]
+platform-proto = { path = "../platform-proto", version = "=0.1.0" }
+prost.workspace = true
+storage-adapters = { path = "../storage-adapters", version = "=0.1.0" }
+tempfile.workspace = true
+tokio = { workspace = true, features = ["macros", "net", "rt-multi-thread", "sync", "time"] }
+
+[lints]
+workspace = true

@@ -1,0 +1,20 @@
+[package]
+name = "source-capture"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+getrandom.workspace = true
+observation-envelope = { path = "../observation-envelope", version = "=0.1.0" }
+platform-proto = { path = "../platform-proto", version = "=0.1.0" }
+thiserror.workspace = true
+wal = { path = "../wal", version = "=0.1.0" }
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

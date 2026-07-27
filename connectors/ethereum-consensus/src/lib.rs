@@ -6,6 +6,7 @@ use evm_canonicality::{EthereumCheckpoint, EthereumError};
 use evm_domain::B256;
 use serde::Deserialize;
 use sha2::{Digest as _, Sha256};
+use source_runtime::{HttpRequestSpec, SourceLoopError};
 use thiserror::Error;
 
 /// Validated consensus-client source configuration.
@@ -42,6 +43,35 @@ impl ConsensusSourceConfig {
     #[must_use]
     pub fn source_id(&self) -> &str {
         &self.source_id
+    }
+
+    /// Validated consensus REST endpoint.
+    #[must_use]
+    pub fn endpoint(&self) -> &str {
+        &self.endpoint
+    }
+
+    /// Builds independent raw Beacon API requests for head and finalized
+    /// blocks.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the validated base endpoint cannot form an HTTP
+    /// polling request.
+    pub fn http_poll_plan(&self) -> Result<Vec<HttpRequestSpec>, ConsensusConnectorError> {
+        let base = self.endpoint.trim_end_matches('/');
+        Ok(vec![
+            HttpRequestSpec::get(
+                format!("{base}/eth/v2/beacon/blocks/head"),
+                "beacon_api",
+                "beacon_block.head",
+            )?,
+            HttpRequestSpec::get(
+                format!("{base}/eth/v2/beacon/blocks/finalized"),
+                "beacon_api",
+                "beacon_block.finalized",
+            )?,
+        ])
     }
 
     /// Creates an independent monotonic slot cursor.
@@ -190,6 +220,9 @@ pub enum ConsensusConnectorError {
         /// Observed slot.
         observed: u64,
     },
+    /// HTTP polling configuration was invalid.
+    #[error("invalid consensus HTTP polling plan: {0}")]
+    HttpPlan(#[from] SourceLoopError),
 }
 
 fn parse_quantity(value: &str) -> Result<u64, ConsensusConnectorError> {
