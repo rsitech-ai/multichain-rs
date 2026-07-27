@@ -4,7 +4,10 @@ mod broker;
 mod checkpoint;
 mod object_store;
 
-pub use broker::{BrokerAck, BrokerError, BrokerPublisher, RAW_BITCOIN_OBSERVATION_TOPIC};
+pub use broker::{
+    BrokerAck, BrokerError, BrokerPublisher, RAW_BITCOIN_OBSERVATION_TOPIC,
+    RAW_BSC_OBSERVATION_TOPIC, RAW_ETHEREUM_OBSERVATION_TOPIC,
+};
 pub use checkpoint::{
     CheckpointError, CheckpointKind, CheckpointStore, DurableCheckpoint, ReclaimBlocker,
     SealedWalSegment, ensure_reclaimable,

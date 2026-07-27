@@ -13,6 +13,7 @@ check:
     bash tests/local-validation/runner_contract.sh
     bash tests/local-validation/project_manifest_contract.sh
     bash tests/local-validation/phase1_gate_contract.sh
+    bash tests/local-validation/evm_foundation_gate_contract.sh
 
 infra-up:
     docker compose -f infra/compose.yaml up -d --wait
@@ -47,3 +48,6 @@ verify-phase0:
 
 verify-phase1:
     ./scripts/verify-phase1.sh
+
+verify-evm-foundation:
+    ./scripts/verify-evm-foundation.sh

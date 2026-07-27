@@ -1670,6 +1670,7 @@ dependencies = [
  "sha2 0.11.0",
  "solana-canonicality",
  "solana-domain",
+ "source-capture",
  "storage-adapters",
  "storage-ports",
  "tempfile",
@@ -3175,6 +3176,18 @@ dependencies = [
  "tokio",
  "yellowstone-grpc-client",
  "yellowstone-grpc-proto",
+]
+
+[[package]]
+name = "source-capture"
+version = "0.1.0"
+dependencies = [
+ "getrandom 0.4.3",
+ "observation-envelope",
+ "platform-proto",
+ "tempfile",
+ "thiserror 2.0.19",
+ "wal",
 ]
 
 [[package]]

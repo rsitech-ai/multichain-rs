@@ -74,6 +74,27 @@ These fixtures prove protocol and replay compatibility at their documented
 semantic scope. They do not prove continuous source availability, geographic
 independence, production latency, or historical completeness.
 
+## Ethereum/BSC raw-first foundation
+
+Result on 2026-07-27: **repository-local gate passed; production promotion
+held**.
+
+```text
+just verify-evm-foundation
+```
+
+The gate proves that recorded Reth, Ethereum consensus, and official BSC
+source payloads cross the shared WAL durability boundary before parsing.
+Ethereum and BSC publish to separate versioned raw topics, broker replay is
+idempotent, exact malformed payloads remain recoverable, and ambiguous or
+inconsistent WAL commit outcomes poison the source session.
+
+The evidence is written under
+`artifacts/certification/<build-sha>/evm-foundation-local/`. Owned Ethereum
+execution/consensus nodes, an official BSC mainnet node, independent secondary
+sources, live reorg/finality fault injection, and operational load/DR evidence
+remain explicit production blockers.
+
 ## Production live-validation matrix
 
 Local binaries are downloaded and verified on demand by `just validate-local`;
