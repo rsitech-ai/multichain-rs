@@ -9,6 +9,7 @@ publish.workspace = true
 [dependencies]
 async-trait.workspace = true
 axum = { workspace = true, features = ["http1", "json", "tokio"] }
+alert-engine = { path = "../../processors/alert-engine", version = "=0.1.0" }
 bitcoin-canonicality = { path = "../../processors/bitcoin-canonicality", version = "=0.1.0" }
 bitcoin-core-connector = { path = "../../connectors/bitcoin-core", version = "=0.1.0" }
 bitcoin-domain = { path = "../../crates/bitcoin-domain", version = "=0.1.0" }
@@ -20,6 +21,10 @@ sqlx.workspace = true
 storage-adapters = { path = "../../crates/storage-adapters", version = "=0.1.0" }
 storage-ports = { path = "../../crates/storage-ports", version = "=0.1.0" }
 tokio = { workspace = true, features = ["macros", "net", "rt-multi-thread", "time"] }
+
+[dev-dependencies]
+serde_json.workspace = true
+tower.workspace = true
 
 [lints]
 workspace = true

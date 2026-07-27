@@ -1,4 +1,4 @@
-#![doc = "Phase 0 REST serving layer with fail-closed dependency readiness."]
+#![doc = "Revision-aware REST serving layer with fail-closed dependency readiness."]
 
 mod routes;
 
@@ -129,11 +129,12 @@ impl DependencyReadiness {
     }
 }
 
-/// Builds the complete Phase 0 REST router.
+/// Builds the complete REST router.
 pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/health/live", get(routes::health::live))
         .route("/health/ready", get(routes::health::ready))
+        .route("/v1/alerts/preview", post(routes::alerts::preview))
         .route("/v1/fixtures/{fixture_id}", get(routes::fixtures::fixture))
         .route(
             "/v1/lineage/facts/{fact_id}",
@@ -144,6 +145,12 @@ pub fn router(state: AppState) -> Router {
             post(routes::replay::validate),
         )
         .with_state(state)
+}
+
+/// Builds the storage-independent alert preview boundary for focused tests and
+/// local tooling.
+pub fn alert_preview_router() -> Router {
+    Router::new().route("/v1/alerts/preview", post(routes::alerts::preview))
 }
 
 /// Checks the four local service ports before deciding whether to run a live
