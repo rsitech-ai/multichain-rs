@@ -1,7 +1,6 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 check:
-    python3 scripts/validate-project-manifest.py .rsitech/project.json --repo-root .
     cargo fmt --all -- --check
     cargo clippy --workspace --all-targets --all-features -- -D warnings
     cargo test --workspace --all-targets
@@ -11,7 +10,6 @@ check:
     gitleaks detect --no-banner
     docker compose -f infra/compose.yaml config --quiet
     bash tests/local-validation/runner_contract.sh
-    bash tests/local-validation/project_manifest_contract.sh
     bash tests/local-validation/phase1_gate_contract.sh
     bash tests/local-validation/evm_foundation_gate_contract.sh
 

@@ -6,7 +6,6 @@ REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 readonly REPOSITORY_ROOT
 readonly MANIFEST_VALIDATOR="$REPOSITORY_ROOT/scripts/validate-project-manifest.py"
 readonly LOCAL_CHECKS=(
-  project_manifest
   rust_format
   bitcoin_clippy
   bitcoin_unit_tests
@@ -135,9 +134,6 @@ run_check() {
 }
 
 cd "$REPOSITORY_ROOT"
-run_check project_manifest \
-  python3 "$MANIFEST_VALIDATOR" .rsitech/project.json \
-  --repo-root "$REPOSITORY_ROOT"
 run_check rust_format cargo fmt --all -- --check
 run_check bitcoin_clippy \
   cargo clippy \

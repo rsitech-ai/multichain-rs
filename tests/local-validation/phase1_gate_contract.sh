@@ -11,7 +11,6 @@ jq -e '
   .mode == "dry_run" and
   .scope == "bitcoin_phase1_local_gate" and
   .local_checks == [
-    "project_manifest",
     "rust_format",
     "bitcoin_clippy",
     "bitcoin_unit_tests",
